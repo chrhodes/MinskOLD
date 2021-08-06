@@ -43,7 +43,14 @@ namespace Minsk
 
                 Console.ForegroundColor = color;
 
-                if (syntaxTree.Diagnostics.Any())
+                if (!syntaxTree.Diagnostics.Any())
+                {
+                    var e = new Evaluator(syntaxTree.Root);
+
+                    var result = e.Evaluate();
+                    Console.WriteLine(result);
+                }
+                else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
 
@@ -54,6 +61,18 @@ namespace Minsk
 
                     Console.ResetColor();
                 }
+
+                //if (syntaxTree.Diagnostics.Any())
+                //{
+                //    Console.ForegroundColor = ConsoleColor.Red;
+
+                //    foreach (var diagnostic in parser.Diagnostics)
+                //    {
+                //        Console.WriteLine(diagnostic);
+                //    }
+
+                //    Console.ResetColor();
+                //}
 
                 Log.APPLICATION_START($"Exit", Common.LOG_CATEGORY, startTicks);
             }
@@ -147,7 +166,6 @@ namespace Minsk
             public ExpressionSyntax Root { get; }
             public SyntaxToken EndOfFileToken { get; }
         }
-
 
         // NOTE(crhodes)
         // Tokens represent a word in language
@@ -328,7 +346,10 @@ namespace Minsk
                     var length = _position - start;
                     var text = _text.Substring(start, length);
 
-                    int.TryParse(text, out var value);
+                    if (!int.TryParse(text, out var value))
+                    {
+                        _diagnostics.Add($"ERROR: The number {_text} is not a valid Int32");
+                    }
 
                     Log.Trace($"Exit (new NumberToken)", Common.LOG_CATEGORY, startTicks);
 
@@ -541,7 +562,9 @@ namespace Minsk
                 var left = ParsePrimaryExpression();
 
                 while (Current.Kind == SyntaxKind.PlusToken
-                    || Current.Kind == SyntaxKind.MinusToken)
+                    || Current.Kind == SyntaxKind.MinusToken
+                    || Current.Kind == SyntaxKind.StarToken
+                    || Current.Kind == SyntaxKind.SlashToken)
                 {
                     var operatorToken = NextToken();
                     var right = ParsePrimaryExpression();
@@ -562,6 +585,84 @@ namespace Minsk
                 Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
                 return new NumberExpressionSyntax(numberToken);
+            }
+        }
+
+        class Evaluator
+        {
+            private readonly ExpressionSyntax _root;
+
+            public Evaluator(ExpressionSyntax root)
+            {
+                Int64 startTicks = Log.CONSTRUCTOR($"Enter: root:{root}", Common.LOG_CATEGORY);
+
+                _root = root;
+
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+            }
+
+            public int Evaluate()
+            {
+                Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+
+                return EvaluateExpression(_root);
+            }
+
+            private int EvaluateExpression(ExpressionSyntax node)
+            {
+                Int64 startTicks = Log.Trace($"Enter node:{node}", Common.LOG_CATEGORY);
+
+                // BinaryExpression
+                // NumberExpression
+
+                if (node is NumberExpressionSyntax n)
+                {
+
+                    Log.Trace ($"Exit", Common.LOG_CATEGORY, startTicks);
+                    return (int)n.NumberToken.Value;
+                }
+
+                if (node is BinaryExpressionSyntax b)
+                {
+                    var left = EvaluateExpression(b.Left);
+                    var right = EvaluateExpression(b.Right);
+
+
+                    if (b.OperatorToken.Kind == SyntaxKind.PlusToken)
+                    {
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return left + right;
+                    }
+
+                    else if (b.OperatorToken.Kind == SyntaxKind.MinusToken)
+                    {
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return left - right;
+                    }
+
+                    else if (b.OperatorToken.Kind == SyntaxKind.StarToken)
+                    {
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return left * right;
+                    }
+
+                    else if (b.OperatorToken.Kind == SyntaxKind.SlashToken)
+                    {
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return left / right;
+                    }
+                    else
+                    {
+                        throw new Exception($"Unexpected Binary Operator {b.OperatorToken.Kind}");
+                    }
+
+                }
+
+                throw new Exception($"Unexpected node {node.Kind}");
             }
         }
     }
