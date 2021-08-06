@@ -15,6 +15,11 @@ namespace Minsk
             Thread.Sleep(200);
             startTicks = Log.APPLICATION_START($"Enter", Common.LOG_CATEGORY, startTicks);
 
+            // NOTE(crhodes)
+            // Console Directive
+
+            bool showTree = false;
+
             while (true)
             {
                 Console.Write("> ");
@@ -28,20 +33,30 @@ namespace Minsk
                     return;
                 }
 
-                var parser = new Parser(line);
-                var syntaxTree = parser.Parse();
+                if (line == "#showTree")
+                {
+                    showTree = !showTree;
+                    Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees");
+                    continue;
+                }
+                else if (line == "#cls")
+                {
+                    Console.Clear();
+                    continue;
+                }
 
-                var color = Console.ForegroundColor;
+                var syntaxTree = SyntaxTree.Parse(line);
 
-                //Console.ForegroundColor = ConsoleColor.DarkCyan;
+                if (showTree)
+                {
+                    var color = Console.ForegroundColor;
 
-                //PrettyPrint1(syntaxTree.Root);
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    PrettyPrint2(syntaxTree.Root);
 
-                PrettyPrint2(syntaxTree.Root);
-
-                Console.ForegroundColor = color;
+                    Console.ForegroundColor = color;
+                }
 
                 if (!syntaxTree.Diagnostics.Any())
                 {
@@ -54,25 +69,13 @@ namespace Minsk
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
 
-                    foreach (var diagnostic in parser.Diagnostics)
+                    foreach (var diagnostic in syntaxTree.Diagnostics)
                     {
                         Console.WriteLine(diagnostic);
                     }
 
                     Console.ResetColor();
                 }
-
-                //if (syntaxTree.Diagnostics.Any())
-                //{
-                //    Console.ForegroundColor = ConsoleColor.Red;
-
-                //    foreach (var diagnostic in parser.Diagnostics)
-                //    {
-                //        Console.WriteLine(diagnostic);
-                //    }
-
-                //    Console.ResetColor();
-                //}
 
                 Log.APPLICATION_START($"Exit", Common.LOG_CATEGORY, startTicks);
             }
@@ -166,6 +169,13 @@ namespace Minsk
             public IReadOnlyList<string> Diagnostics { get; }
             public ExpressionSyntax Root { get; }
             public SyntaxToken EndOfFileToken { get; }
+
+            public static SyntaxTree Parse(string text)
+            {
+                var parser = new Parser(text);
+
+                return parser.Parse();
+            }
         }
 
         // NOTE(crhodes)
@@ -290,6 +300,8 @@ namespace Minsk
 
             public override IEnumerable<SyntaxNode> GetChildren()
             {
+                Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+
                 yield return OpenParenthesisToken;
                 yield return Expression;
                 yield return CloseParenthesisToken;
