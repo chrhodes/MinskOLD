@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 using VNC;
 
-namespace mc
+namespace Minsk
 {
     class Program
     {
@@ -12,9 +14,6 @@ namespace mc
             Int64 startTicks = Log.APPLICATION_START($"SignalR Startup Delay", Common.LOG_CATEGORY);
             Thread.Sleep(200);
             startTicks = Log.APPLICATION_START($"Enter", Common.LOG_CATEGORY, startTicks);
-
-            // NOTE(crhodes)
-            // Establish REPL
 
             while (true)
             {
@@ -29,29 +28,95 @@ namespace mc
                     return;
                 }
 
-                var lexer = new Lexer(line);
+                var parser = new Parser(line);
+                var expression = parser.Parse();
 
-                while (true)
-                {
-                    var token = lexer.NextToken();
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
 
-                    if (token.Kind == SyntaxKind.EndOfFileToken) break;
+                PrettyPrint1(expression);
 
-                    Console.Write($"{token.Kind}: '{token.Text}'");
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-                    if (token.Value != null)
-                    {
-                        Console.Write($" {token.Value}");
-                    }
+                PrettyPrint2(expression);
 
-                    Console.WriteLine();
-                }
+                Console.ForegroundColor = color;
+
+                //var lexer = new Lexer(line);
+
+                //while (true)
+                //{
+                //    var token = lexer.NextToken();
+
+                //    if (token.Kind == SyntaxKind.EndOfFileToken) break;
+
+                //    Console.Write($"{token.Kind}: '{token.Text}'");
+
+                //    if (token.Value != null)
+                //    {
+                //        Console.Write($" {token.Value}");
+                //    }
+
+                //    Console.WriteLine();
+                //}
 
                 Log.APPLICATION_START($"Exit", Common.LOG_CATEGORY, startTicks);
             }
         }
 
-        internal enum SyntaxKind
+        static void PrettyPrint1(SyntaxNode node, string indent = "")
+        {
+            Console.Write(indent);
+            Console.Write(node.Kind);
+
+            if (node is SyntaxToken t && t.Value != null)
+            {
+                Console.Write(" ");
+                Console.Write(t.Value);
+            }
+
+            Console.WriteLine();
+
+            indent += "   ";
+
+            foreach (var child in node.GetChildren())
+            {
+                PrettyPrint1(child, indent);
+            }
+        }
+
+        static void PrettyPrint2(SyntaxNode node, string indent = "", bool isLast = true)
+        {
+            // Unix https://en.wikipedia.org/wiki/Tree_(command)
+            // └──
+            // ├──
+            // │
+
+            var marker = isLast ? "└──" : "├──";
+
+            Console.Write(indent);
+            Console.Write(marker);
+            Console.Write(node.Kind);
+
+            if (node is SyntaxToken t && t.Value != null)
+            {
+                Console.Write(" ");
+                Console.Write(t.Value);
+            }
+
+            Console.WriteLine();
+
+            indent += isLast ? "   " : "│   ";
+
+            var lastChild = node.GetChildren().LastOrDefault();
+
+            foreach (var child in node.GetChildren())
+            {
+                PrettyPrint2(child, indent, child == lastChild);
+            }
+        }
+
+        enum SyntaxKind
         {
             NumberToken,
             WhiteSpaceToken,
@@ -62,12 +127,18 @@ namespace mc
             OpenParenthesisToken,
             CloseParenthesisToken,
             BadToken,
-            EndOfFileToken
+            EndOfFileToken,
+            NumberExpression,
+            BinaryExpression
         }
 
-        // Represents a word in language
+        // NOTE(crhodes)
+        // Tokens represent a word in language
+        // Think of the tokens as leaves in the tree
 
-        internal class SyntaxToken
+        // For now just treat them as SyntaxNodes
+
+        class SyntaxToken : SyntaxNode
         {
 
             public SyntaxToken(SyntaxKind kind, int position, string text, object value)
@@ -82,13 +153,88 @@ namespace mc
                 Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
             }
 
-            public SyntaxKind Kind { get; }
+            public override SyntaxKind Kind { get; }
+
             public int Position { get; }
             public string Text { get; }
             public object Value { get; }
+
+            public override IEnumerable<SyntaxNode> GetChildren()
+            {
+                return Enumerable.Empty<SyntaxNode>();
+            }
         }
 
-        internal class Lexer
+        // NOTE(crhodes)
+        // Base type for all Syntax Nodes
+
+        abstract class SyntaxNode
+        {
+            public abstract SyntaxKind Kind { get; }
+
+            // NOTE(crhodes)
+            // Add notion of children so can walk tree in a generic way
+
+            public abstract IEnumerable<SyntaxNode> GetChildren();
+        }
+
+        abstract class ExpressionSyntax : SyntaxNode
+        {
+
+        }
+
+        sealed class NumberExpressionSyntax : ExpressionSyntax
+        {
+            public NumberExpressionSyntax(SyntaxToken numberToken)
+            {
+                Int64 startTicks = Log.CONSTRUCTOR($"Enter: numberToken:{numberToken}", Common.LOG_CATEGORY);
+
+                NumberToken = numberToken;
+
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+            }
+
+            public override SyntaxKind Kind => SyntaxKind.NumberExpression;
+
+            public SyntaxToken NumberToken { get; }
+
+            public override IEnumerable<SyntaxNode> GetChildren()
+            {
+                yield return NumberToken;
+            }
+        }
+
+        sealed class BinaryExpressionSyntax : ExpressionSyntax
+        {
+            public BinaryExpressionSyntax(ExpressionSyntax left, SyntaxToken operatorToken, ExpressionSyntax right)
+            {
+                Int64 startTicks = Log.CONSTRUCTOR($"Enter: left: {left} operatorToken: {operatorToken} right: {right}", Common.LOG_CATEGORY);
+
+                Left = left;
+                OperatorToken = operatorToken;
+                Right = right;
+
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+            }
+
+            public override SyntaxKind Kind => SyntaxKind.BinaryExpression;
+
+            public ExpressionSyntax Left { get; }
+            public SyntaxToken OperatorToken { get; }
+            public ExpressionSyntax Right { get; }
+
+            public override IEnumerable<SyntaxNode> GetChildren()
+            {
+                yield return Left;
+                yield return OperatorToken;
+                yield return Right;
+            }
+        }
+
+        // NOTE(crhodes)
+        // Lexer breaks the input stream into tokens (words)
+
+        class Lexer
         {
             private readonly string _text;
             private int _position;
@@ -209,7 +355,7 @@ namespace mc
                 }
                 else if ((Current == ')'))
                 {
-                    Log.Trace($"Exit (new CloseParenthesis)", Common.LOG_CATEGORY, startTicks);
+                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
 
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
                 }
@@ -217,6 +363,152 @@ namespace mc
                 Log.Trace($"Exit (new BadToken)", Common.LOG_CATEGORY, startTicks);
 
                 return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position - 1, 1), null);
+            }
+        }
+
+        // // NOTE(crhodes)
+        // Parser assembles the tokens into sentences
+        // Parser produces Syntax Trees (sentences)
+        // from the Syntax Tokens (words)
+        // Syntax Nodes
+
+        // Two possible trees
+        // First is left to right.
+        // Second understands operator precedence
+
+        // 1 + 2 * 3
+        //
+        //      +
+        //     / \
+        //    1   *
+        //       / \
+        //      2   3
+
+        // 7
+
+        // 1 + 2 * 3
+        //
+        //        *
+        //       / \
+        //      +  3
+        //     / \
+        //    1   2
+
+        // 9
+
+        class Parser
+        {
+            private readonly SyntaxToken[] _tokens;
+            private int _position;
+
+            public Parser(string text)
+            {
+                Int64 startTicks = Log.CONSTRUCTOR($"Enter: text:{text}", Common.LOG_CATEGORY);
+
+                var tokens = new List<SyntaxToken>();
+
+                var lexer = new Lexer(text);
+
+                SyntaxToken token;
+
+                do
+                {
+                    token = lexer.NextToken();
+
+                    if (token.Kind != SyntaxKind.WhiteSpaceToken
+                        && token.Kind != SyntaxKind.BadToken)
+                    {
+                        tokens.Add(token);
+                    }
+                } while (token.Kind != SyntaxKind.EndOfFileToken);
+
+                _tokens = tokens.ToArray();
+
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+            }
+
+            // NOTE(crhodes)
+            // This lets you look ahead to see how to parse what you have already seen.
+
+            private SyntaxToken Peek(int offset)
+            {
+                Int64 startTicks = Log.Trace($"Enter offset: {offset}", Common.LOG_CATEGORY);
+
+                var index = _position + offset;
+
+                if (index >= _tokens.Length)
+                {
+                    Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                    return _tokens[_tokens.Length - 1];
+                }
+
+                Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return _tokens[index];
+            }
+
+            private SyntaxToken Current => Peek(0);
+
+            private SyntaxToken NextToken()
+            {
+                Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+                var current = Current;
+                _position++;
+
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return current;
+            }
+
+            private SyntaxToken Match(SyntaxKind kind)
+            {
+                Int64 startTicks = Log.Trace($"Enter kind: {kind}", Common.LOG_CATEGORY);
+
+                if (Current.Kind == kind)
+                {
+                    Log.Trace($"Exit Current.Kind == kind", Common.LOG_CATEGORY, startTicks);
+
+                    return NextToken();
+                }
+
+                // NOTE(crhodes)
+                // This is super useful because ...
+
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return new SyntaxToken(kind, Current.Position, null, null);
+            }
+
+
+            public ExpressionSyntax Parse()
+            {
+                Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+                var left = ParsePrimaryExpression();
+
+                while (Current.Kind == SyntaxKind.PlusToken
+                    || Current.Kind == SyntaxKind.MinusToken)
+                {
+                    var operatorToken = NextToken();
+                    var right = ParsePrimaryExpression();
+                    left = new BinaryExpressionSyntax(left, operatorToken, right);
+                }
+
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return left;
+            }
+            private ExpressionSyntax ParsePrimaryExpression()
+            {
+                Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+                var numberToken = Match(SyntaxKind.NumberToken);
+
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return new NumberExpressionSyntax(numberToken);
             }
         }
     }
