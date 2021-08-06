@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using VNC;
 
-namespace Minsk
+namespace Minsk.CodeAnalysis
 {
     // NOTE(crhodes)
     // Lexer breaks the input stream into tokens (words)

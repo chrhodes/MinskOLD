@@ -4,7 +4,7 @@ using System.Linq;
 
 using VNC;
 
-namespace Minsk
+namespace Minsk.CodeAnalysis
 {
     // NOTE(crhodes)
     // SyntaxTree represent entire collection of nodes.

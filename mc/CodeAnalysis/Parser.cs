@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using VNC;
 
-namespace Minsk
+namespace Minsk.CodeAnalysis
 {
     // // NOTE(crhodes)
     // Parser assembles the tokens into sentences

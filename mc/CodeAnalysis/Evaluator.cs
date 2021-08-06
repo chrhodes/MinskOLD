@@ -2,7 +2,7 @@ using System;
 
 using VNC;
 
-namespace Minsk
+namespace Minsk.CodeAnalysis
 {
     internal class Evaluator
     {
