@@ -143,7 +143,8 @@ namespace Minsk
             BadToken,
             EndOfFileToken,
             NumberExpression,
-            BinaryExpression
+            BinaryExpression,
+            ParenthesizedExpression
         }
 
         // NOTE(crhodes)
@@ -269,6 +270,29 @@ namespace Minsk
                 yield return Left;
                 yield return OperatorToken;
                 yield return Right;
+            }
+        }
+
+        sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
+        {
+            public ParenthesizedExpressionSyntax(SyntaxToken openParenthesisToken, ExpressionSyntax expression, SyntaxToken closeParenthesisToken)
+            {
+                OpenParenthesisToken = openParenthesisToken;
+                Expression = expression;
+                CloseParenthesisToken = closeParenthesisToken;
+            }
+
+            public override SyntaxKind Kind => SyntaxKind.ParenthesizedExpression;
+
+            public SyntaxToken OpenParenthesisToken { get; }
+            public ExpressionSyntax Expression { get; }
+            public SyntaxToken CloseParenthesisToken { get; }
+
+            public override IEnumerable<SyntaxNode> GetChildren()
+            {
+                yield return OpenParenthesisToken;
+                yield return Expression;
+                yield return CloseParenthesisToken;
             }
         }
 
@@ -543,27 +567,52 @@ namespace Minsk
                 return new SyntaxToken(kind, Current.Position, null, null);
             }
 
+            private ExpressionSyntax ParseExpression()
+            {
+                Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+
+                return ParseTerm();
+            }
+
             public SyntaxTree Parse()
             {
                 Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
-                var expression = ParseExpression();
+                var expression = ParseTerm();
                 var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
 
-                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.Trace($"Exit new SyntaxTree", Common.LOG_CATEGORY, startTicks);
 
                 return new SyntaxTree(_diagnostics, expression, endOfFileToken);
             }
 
-            private ExpressionSyntax ParseExpression()
+            private ExpressionSyntax ParseTerm()
             {
+
+                Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+                var left = ParseFactor();
+
+                while (Current.Kind == SyntaxKind.PlusToken
+                    || Current.Kind == SyntaxKind.MinusToken)
+                {
+                    var operatorToken = NextToken();
+                    var right = ParseFactor();
+                    left = new BinaryExpressionSyntax(left, operatorToken, right);
+                }
+
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return left;
+            }
+
+            private ExpressionSyntax ParseFactor()
+            {
+
                 Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
                 var left = ParsePrimaryExpression();
 
-                while (Current.Kind == SyntaxKind.PlusToken
-                    || Current.Kind == SyntaxKind.MinusToken
-                    || Current.Kind == SyntaxKind.StarToken
+                while (Current.Kind == SyntaxKind.StarToken
                     || Current.Kind == SyntaxKind.SlashToken)
                 {
                     var operatorToken = NextToken();
@@ -571,7 +620,7 @@ namespace Minsk
                     left = new BinaryExpressionSyntax(left, operatorToken, right);
                 }
 
-                Log.Trace($"Exit ExpressionSyntax: {left}", Common.LOG_CATEGORY, startTicks);
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
                 return left;
             }
@@ -580,12 +629,58 @@ namespace Minsk
             {
                 Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
+                if (Current.Kind == SyntaxKind.OpenParenthesisToken)
+                {
+                    var left = NextToken();
+                    var expression = ParseExpression();
+                    var right = Match(SyntaxKind.CloseParenthesisToken);
+
+                    Log.Trace($"Exit ParenthesizedExpressionSyntax", Common.LOG_CATEGORY, startTicks);
+
+                    return new ParenthesizedExpressionSyntax(left, expression, right);
+                }
+
                 var numberToken = Match(SyntaxKind.NumberToken);
 
-                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.Trace($"Exit NumberExpressionSyntax", Common.LOG_CATEGORY, startTicks);
 
                 return new NumberExpressionSyntax(numberToken);
             }
+
+            // This does not understand Operator Precedence
+            // Approach above hard codes knowledge 
+
+            //private ExpressionSyntax ParseExpression()
+            //{
+            //    Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+            //    var left = ParsePrimaryExpression();
+
+            //    while (Current.Kind == SyntaxKind.PlusToken
+            //        || Current.Kind == SyntaxKind.MinusToken
+            //        || Current.Kind == SyntaxKind.StarToken
+            //        || Current.Kind == SyntaxKind.SlashToken)
+            //    {
+            //        var operatorToken = NextToken();
+            //        var right = ParsePrimaryExpression();
+            //        left = new BinaryExpressionSyntax(left, operatorToken, right);
+            //    }
+
+            //    Log.Trace($"Exit ExpressionSyntax: {left}", Common.LOG_CATEGORY, startTicks);
+
+            //    return left;
+            //}
+
+            //private ExpressionSyntax ParsePrimaryExpression()
+            //{
+            //    Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+            //    var numberToken = Match(SyntaxKind.NumberToken);
+
+            //    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+            //    return new NumberExpressionSyntax(numberToken);
+            //}
         }
 
         class Evaluator
@@ -617,8 +712,8 @@ namespace Minsk
 
                 if (node is NumberExpressionSyntax n)
                 {
-
                     Log.Trace ($"Exit", Common.LOG_CATEGORY, startTicks);
+
                     return (int)n.NumberToken.Value;
                 }
 
@@ -660,6 +755,11 @@ namespace Minsk
                         throw new Exception($"Unexpected Binary Operator {b.OperatorToken.Kind}");
                     }
 
+                }
+
+                if (node is ParenthesizedExpressionSyntax p)
+                {
+                    return EvaluateExpression(p.Expression);
                 }
 
                 throw new Exception($"Unexpected node {node.Kind}");
