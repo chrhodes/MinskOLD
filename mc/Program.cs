@@ -29,36 +29,31 @@ namespace Minsk
                 }
 
                 var parser = new Parser(line);
-                var expression = parser.Parse();
+                var syntaxTree = parser.Parse();
 
                 var color = Console.ForegroundColor;
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
 
-                PrettyPrint1(expression);
+                //Console.ForegroundColor = ConsoleColor.DarkCyan;
+
+                //PrettyPrint1(syntaxTree.Root);
 
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-                PrettyPrint2(expression);
+                PrettyPrint2(syntaxTree.Root);
 
                 Console.ForegroundColor = color;
 
-                //var lexer = new Lexer(line);
+                if (syntaxTree.Diagnostics.Any())
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
 
-                //while (true)
-                //{
-                //    var token = lexer.NextToken();
+                    foreach (var diagnostic in parser.Diagnostics)
+                    {
+                        Console.WriteLine(diagnostic);
+                    }
 
-                //    if (token.Kind == SyntaxKind.EndOfFileToken) break;
-
-                //    Console.Write($"{token.Kind}: '{token.Text}'");
-
-                //    if (token.Value != null)
-                //    {
-                //        Console.Write($" {token.Value}");
-                //    }
-
-                //    Console.WriteLine();
-                //}
+                    Console.ResetColor();
+                }
 
                 Log.APPLICATION_START($"Exit", Common.LOG_CATEGORY, startTicks);
             }
@@ -133,6 +128,28 @@ namespace Minsk
         }
 
         // NOTE(crhodes)
+        // SyntaxTree represent entire collection of nodes.
+
+        sealed class SyntaxTree
+        {
+            public SyntaxTree(IEnumerable<string> diagnostics, ExpressionSyntax root, SyntaxToken endOfFileToken)
+            {
+                Int64 startTicks = Log.CONSTRUCTOR($"Enter: diagnostics: {diagnostics} root:{root} endOfFileToken:{endOfFileToken}", Common.LOG_CATEGORY);
+
+                Diagnostics = diagnostics.ToArray();
+                Root = root;
+                EndOfFileToken = endOfFileToken;
+
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+            }
+
+            public IReadOnlyList<string> Diagnostics { get; }
+            public ExpressionSyntax Root { get; }
+            public SyntaxToken EndOfFileToken { get; }
+        }
+
+
+        // NOTE(crhodes)
         // Tokens represent a word in language
         // Think of the tokens as leaves in the tree
 
@@ -161,6 +178,8 @@ namespace Minsk
 
             public override IEnumerable<SyntaxNode> GetChildren()
             {
+                Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+
                 return Enumerable.Empty<SyntaxNode>();
             }
         }
@@ -200,6 +219,8 @@ namespace Minsk
 
             public override IEnumerable<SyntaxNode> GetChildren()
             {
+                Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+
                 yield return NumberToken;
             }
         }
@@ -225,6 +246,8 @@ namespace Minsk
 
             public override IEnumerable<SyntaxNode> GetChildren()
             {
+                Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+
                 yield return Left;
                 yield return OperatorToken;
                 yield return Right;
@@ -239,6 +262,10 @@ namespace Minsk
             private readonly string _text;
             private int _position;
 
+            // NOTE(crhodes)
+            // Handle errors
+            private List<string> _diagnostics = new List<string>();
+
             public Lexer(string text)
             {
                 Int64 startTicks = Log.CONSTRUCTOR($"Enter: text:{text}", Common.LOG_CATEGORY);
@@ -247,6 +274,8 @@ namespace Minsk
 
                 Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
             }
+
+            public IEnumerable<string> Diagnostics => _diagnostics;
 
             private char Current
             {
@@ -360,7 +389,9 @@ namespace Minsk
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
                 }
 
-                Log.Trace($"Exit (new BadToken)", Common.LOG_CATEGORY, startTicks);
+                _diagnostics.Add($"ERROR: Bad character input: '{Current}'");
+
+                Log.Trace($"Exit: ERROR: Bad character input: '{Current}' (new BadToken)", Common.LOG_CATEGORY, startTicks);
 
                 return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position - 1, 1), null);
             }
@@ -401,6 +432,10 @@ namespace Minsk
             private readonly SyntaxToken[] _tokens;
             private int _position;
 
+            // NOTE(crhodes)
+            // Handle errors
+            private List<string> _diagnostics = new List<string>();
+
             public Parser(string text)
             {
                 Int64 startTicks = Log.CONSTRUCTOR($"Enter: text:{text}", Common.LOG_CATEGORY);
@@ -424,8 +459,12 @@ namespace Minsk
 
                 _tokens = tokens.ToArray();
 
+                _diagnostics.AddRange(lexer.Diagnostics);
+
                 Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
             }
+
+            public IEnumerable<string> Diagnostics => _diagnostics;
 
             // NOTE(crhodes)
             // This lets you look ahead to see how to parse what you have already seen.
@@ -473,16 +512,29 @@ namespace Minsk
                     return NextToken();
                 }
 
+                _diagnostics.Add($"ERROR: Unexpected token: <{Current.Kind}>, expected <{kind}>");
+
                 // NOTE(crhodes)
                 // This is super useful because ...
 
-                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.Trace($"Exit: ERROR: Unexpected token: <{Current.Kind}>, expected <{kind}>", Common.LOG_CATEGORY, startTicks);
 
                 return new SyntaxToken(kind, Current.Position, null, null);
             }
 
+            public SyntaxTree Parse()
+            {
+                Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
-            public ExpressionSyntax Parse()
+                var expression = ParseExpression();
+                var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
+
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return new SyntaxTree(_diagnostics, expression, endOfFileToken);
+            }
+
+            private ExpressionSyntax ParseExpression()
             {
                 Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
@@ -496,10 +548,11 @@ namespace Minsk
                     left = new BinaryExpressionSyntax(left, operatorToken, right);
                 }
 
-                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.Trace($"Exit ExpressionSyntax: {left}", Common.LOG_CATEGORY, startTicks);
 
                 return left;
             }
+
             private ExpressionSyntax ParsePrimaryExpression()
             {
                 Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
