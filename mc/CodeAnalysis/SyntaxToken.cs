@@ -12,7 +12,7 @@ namespace Minsk.CodeAnalysis
 
     // For now just treat them as SyntaxNodes
 
-    internal class SyntaxToken : SyntaxNode
+    public sealed class SyntaxToken : SyntaxNode
     {
         public SyntaxToken(SyntaxKind kind, int position, string text, object value)
         {

@@ -8,7 +8,7 @@ namespace Minsk.CodeAnalysis
     // NOTE(crhodes)
     // Lexer breaks the input stream into tokens (words)
 
-    internal class Lexer
+    internal sealed class Lexer
     {
         private readonly string _text;
         private int _position;
@@ -52,7 +52,7 @@ namespace Minsk.CodeAnalysis
             Log.Trace10($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
-        public SyntaxToken NextToken()
+        public SyntaxToken Lex()
         {
             Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
@@ -106,41 +106,32 @@ namespace Minsk.CodeAnalysis
                 return new SyntaxToken(SyntaxKind.WhiteSpaceToken, start, text, null);
             }
 
-            if (Current == '+')
+            switch (Current)
             {
-                Log.Trace($"Exit (new PlusToken)", Common.LOG_CATEGORY, startTicks);
+                case '+':
+                    Log.Trace($"Exit (new PlusToken)", Common.LOG_CATEGORY, startTicks);
 
-                return new SyntaxToken(SyntaxKind.PlusToken, _position++, "+", null);
-            }
-            else if ((Current == '-'))
-            {
-                Log.Trace($"Exit (new MinusToken)", Common.LOG_CATEGORY, startTicks);
+                    return new SyntaxToken(SyntaxKind.PlusToken, _position++, "+", null);
+                case '-':
+                    Log.Trace($"Exit (new MinusToken)", Common.LOG_CATEGORY, startTicks);
 
-                return new SyntaxToken(SyntaxKind.MinusToken, _position++, "-", null);
-            }
-            else if ((Current == '*'))
-            {
-                Log.Trace($"Exit (new StarToken)", Common.LOG_CATEGORY, startTicks);
+                    return new SyntaxToken(SyntaxKind.MinusToken, _position++, "-", null);
+                case '*':
+                    Log.Trace($"Exit (new StarToken)", Common.LOG_CATEGORY, startTicks);
 
-                return new SyntaxToken(SyntaxKind.StarToken, _position++, "*", null);
-            }
-            else if ((Current == '/'))
-            {
-                Log.Trace($"Exit (new SlashToken)", Common.LOG_CATEGORY, startTicks);
+                    return new SyntaxToken(SyntaxKind.StarToken, _position++, "*", null);
+                case '/':
+                    Log.Trace($"Exit (new SlashToken)", Common.LOG_CATEGORY, startTicks);
 
-                return new SyntaxToken(SyntaxKind.SlashToken, _position++, "/", null);
-            }
-            else if ((Current == '('))
-            {
-                Log.Trace($"Exit (new OpenParenthesisToken)", Common.LOG_CATEGORY, startTicks);
+                    return new SyntaxToken(SyntaxKind.SlashToken, _position++, "/", null);
+                case '(':
+                    Log.Trace($"Exit (new OpenParenthesisToken)", Common.LOG_CATEGORY, startTicks);
 
-                return new SyntaxToken(SyntaxKind.OpenParenthesisToken, _position++, "(", null);
-            }
-            else if ((Current == ')'))
-            {
-                Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
+                    return new SyntaxToken(SyntaxKind.OpenParenthesisToken, _position++, "(", null);
+                case ')':
+                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
 
-                return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
+                    return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
             }
 
             _diagnostics.Add($"ERROR: Bad character input: '{Current}'");

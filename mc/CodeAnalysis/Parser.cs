@@ -35,15 +35,14 @@ namespace Minsk.CodeAnalysis
 
     // 9
 
-    internal class Parser
+    internal sealed class Parser
     {
         private readonly SyntaxToken[] _tokens;
-        private int _position;
-
         // NOTE(crhodes)
         // Handle errors
         private List<string> _diagnostics = new List<string>();
 
+        private int _position;
         public Parser(string text)
         {
             Int64 startTicks = Log.CONSTRUCTOR($"Enter: text:{text}", Common.LOG_CATEGORY);
@@ -56,7 +55,7 @@ namespace Minsk.CodeAnalysis
 
             do
             {
-                token = lexer.NextToken();
+                token = lexer.Lex();
 
                 if (token.Kind != SyntaxKind.WhiteSpaceToken
                     && token.Kind != SyntaxKind.BadToken)
@@ -74,42 +73,21 @@ namespace Minsk.CodeAnalysis
 
         public IEnumerable<string> Diagnostics => _diagnostics;
 
-        // NOTE(crhodes)
-        // This lets you look ahead to see how to parse what you have already seen.
-
-        private SyntaxToken Peek(int offset)
-        {
-            Int64 startTicks = Log.Trace($"Enter offset: {offset}", Common.LOG_CATEGORY);
-
-            var index = _position + offset;
-
-            if (index >= _tokens.Length)
-            {
-                Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                return _tokens[_tokens.Length - 1];
-            }
-
-            Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
-
-            return _tokens[index];
-        }
-
         private SyntaxToken Current => Peek(0);
 
-        private SyntaxToken NextToken()
+        public SyntaxTree Parse()
         {
             Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
-            var current = Current;
-            _position++;
+            var expression = ParseExpression();
+            var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
 
-            Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+            Log.Trace($"Exit new SyntaxTree", Common.LOG_CATEGORY, startTicks);
 
-            return current;
+            return new SyntaxTree(_diagnostics, expression, endOfFileToken);
         }
 
-        private SyntaxToken Match(SyntaxKind kind)
+        private SyntaxToken MatchToken(SyntaxKind kind)
         {
             Int64 startTicks = Log.Trace($"Enter kind: {kind}", Common.LOG_CATEGORY);
 
@@ -130,41 +108,23 @@ namespace Minsk.CodeAnalysis
             return new SyntaxToken(kind, Current.Position, null, null);
         }
 
+        private SyntaxToken NextToken()
+        {
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+            var current = Current;
+            _position++;
+
+            Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+            return current;
+        }
+
         private ExpressionSyntax ParseExpression()
         {
             Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
 
             return ParseTerm();
-        }
-
-        public SyntaxTree Parse()
-        {
-            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
-
-            var expression = ParseTerm();
-            var endOfFileToken = Match(SyntaxKind.EndOfFileToken);
-
-            Log.Trace($"Exit new SyntaxTree", Common.LOG_CATEGORY, startTicks);
-
-            return new SyntaxTree(_diagnostics, expression, endOfFileToken);
-        }
-
-        private ExpressionSyntax ParseTerm()
-        {
-            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
-            var left = ParseFactor();
-
-            while (Current.Kind == SyntaxKind.PlusToken
-                || Current.Kind == SyntaxKind.MinusToken)
-            {
-                var operatorToken = NextToken();
-                var right = ParseFactor();
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
-            }
-
-            Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
-
-            return left;
         }
 
         private ExpressionSyntax ParseFactor()
@@ -194,18 +154,58 @@ namespace Minsk.CodeAnalysis
             {
                 var left = NextToken();
                 var expression = ParseExpression();
-                var right = Match(SyntaxKind.CloseParenthesisToken);
+                var right = MatchToken(SyntaxKind.CloseParenthesisToken);
 
                 Log.Trace($"Exit ParenthesizedExpressionSyntax", Common.LOG_CATEGORY, startTicks);
 
                 return new ParenthesizedExpressionSyntax(left, expression, right);
             }
 
-            var numberToken = Match(SyntaxKind.NumberToken);
+            var numberToken = MatchToken(SyntaxKind.NumberToken);
 
-            Log.Trace($"Exit NumberExpressionSyntax", Common.LOG_CATEGORY, startTicks);
+            Log.Trace($"Exit LiteralExpressionSyntax", Common.LOG_CATEGORY, startTicks);
 
-            return new NumberExpressionSyntax(numberToken);
+            return new LiteralExpressionSyntax(numberToken);
+        }
+
+        private ExpressionSyntax ParseTerm()
+        {
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+            var left = ParseFactor();
+
+            while (Current.Kind == SyntaxKind.PlusToken
+                || Current.Kind == SyntaxKind.MinusToken)
+            {
+                var operatorToken = NextToken();
+                var right = ParseFactor();
+                left = new BinaryExpressionSyntax(left, operatorToken, right);
+            }
+
+            Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+            return left;
+        }
+
+        // NOTE(crhodes)
+        // This lets you look ahead to see how to parse what you have already seen.
+
+        private SyntaxToken Peek(int offset)
+        {
+            Int64 startTicks = Log.Trace($"Enter offset: {offset}", Common.LOG_CATEGORY);
+
+            var index = _position + offset;
+
+            if (index >= _tokens.Length)
+            {
+                Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                return _tokens[_tokens.Length - 1];
+            }
+
+            Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
+
+            return _tokens[index];
         }
     }
 }

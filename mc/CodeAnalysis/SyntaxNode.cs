@@ -5,7 +5,7 @@ namespace Minsk.CodeAnalysis
     // NOTE(crhodes)
     // Base type for all Syntax Nodes
 
-    internal abstract class SyntaxNode
+    public abstract class SyntaxNode
     {
         public abstract SyntaxKind Kind { get; }
 

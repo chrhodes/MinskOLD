@@ -4,7 +4,7 @@ using VNC;
 
 namespace Minsk.CodeAnalysis
 {
-    internal class Evaluator
+    public sealed class Evaluator
     {
         private readonly ExpressionSyntax _root;
 
@@ -28,14 +28,11 @@ namespace Minsk.CodeAnalysis
         {
             Int64 startTicks = Log.Trace($"Enter node:{node}", Common.LOG_CATEGORY);
 
-            // BinaryExpression
-            // NumberExpression
-
-            if (node is NumberExpressionSyntax n)
+            if (node is LiteralExpressionSyntax n)
             {
                 Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                return (int)n.NumberToken.Value;
+                return (int)n.LiteralToken.Value;
             }
 
             if (node is BinaryExpressionSyntax b)
