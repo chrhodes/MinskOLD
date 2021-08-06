@@ -3,6 +3,11 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
+    <RootNamespace>Minsk</RootNamespace>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="VNC.Logging" Version="1.1.0" />
+  </ItemGroup>
 
 </Project>
