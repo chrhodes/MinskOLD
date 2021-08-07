@@ -136,41 +136,39 @@ namespace Minsk.CodeAnalysis.Syntax
             return left;
         }
 
-        //private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
-        //{
-        //    var left = ParsePrimaryExpression();
-
-        //    while (true)
-        //    {
-        //        var precedence = Current.Kind.GetBinaryOperatorPrecedence();
-
-        //        if (precedence == 0
-        //            || precedence <= parentPrecedence)
-        //        {
-        //            break;
-        //        }
-
-        //        var operatorToken = NextToken();
-        //        var right = ParseExpression(precedence);
-        //        left = new BinaryExpressionSyntax(left, operatorToken, right);
-        //    }
-
-        //    return left;
-        //}
-
         private ExpressionSyntax ParsePrimaryExpression()
         {
-            if (Current.Kind == SyntaxKind.OpenParenthesisToken)
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+            switch (Current.Kind)
             {
-                var left = NextToken();
-                var expression = ParseExpression();
-                var right = MatchToken(SyntaxKind.CloseParenthesisToken);
+                case SyntaxKind.OpenParenthesisToken:
+                    var left = NextToken();
+                    var expression = ParseExpression();
+                    var right = MatchToken(SyntaxKind.CloseParenthesisToken);
 
-                return new ParenthesizedExpressionSyntax(left, expression, right);
+                    Log.Trace($"Exit (ParenthesizedExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
+
+                    return new ParenthesizedExpressionSyntax(left, expression, right);
+
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                    var keywordToken = NextToken();
+
+                    var value = Current.Kind == SyntaxKind.TrueKeyword;
+
+                    Log.Trace($"Exit (LiteralExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
+
+                    return new LiteralExpressionSyntax(keywordToken, value);
+
+                default:
+                    var numberToken = MatchToken(SyntaxKind.NumberToken);
+
+                    Log.Trace($"Exit (LiteralExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
+
+                    return new LiteralExpressionSyntax(numberToken);
             }
-            var numberToken = MatchToken(SyntaxKind.NumberToken);
 
-            return new LiteralExpressionSyntax(numberToken);
         }
 
         // NOTE(crhodes)

@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
+using VNC;
 
 namespace Minsk.CodeAnalysis.Binding
 {
@@ -9,8 +8,12 @@ namespace Minsk.CodeAnalysis.Binding
     {
         public BoundUnaryExpression(BoundUnaryOperatorKind operatorKind, BoundExpression operand)
         {
+            Int64 startTicks = Log.CONSTRUCTOR($"Enter: operatorKind:{operatorKind} operand:{operand}", Common.LOG_CATEGORY);
+
             OperatorKind = operatorKind;
             Operand = operand;
+
+            Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
         public BoundUnaryOperatorKind OperatorKind { get; }

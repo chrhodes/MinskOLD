@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
+using VNC;
 
 namespace Minsk.CodeAnalysis.Binding
 {
@@ -9,7 +8,11 @@ namespace Minsk.CodeAnalysis.Binding
     {
         public BoundLiteralExpression(object value)
         {
+            Int64 startTicks = Log.CONSTRUCTOR($"Enter: value:{value}", Common.LOG_CATEGORY);
+
             Value = value;
+
+            Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.LiteralExpression;

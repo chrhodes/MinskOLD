@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using Minsk.CodeAnalysis.Syntax;
 
+using VNC;
 
 namespace Minsk.CodeAnalysis.Binding
 {
@@ -16,15 +17,20 @@ namespace Minsk.CodeAnalysis.Binding
 
         public BoundExpression BindExpression(ExpressionSyntax syntax)
         {
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
             switch (syntax.Kind)
             {
                 case SyntaxKind.LiteralExpression:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BindLiteralExpression((LiteralExpressionSyntax)syntax);
 
                 case SyntaxKind.UnaryExpression:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BindUnaryExpression((UnaryExpressionSyntax)syntax);
 
                 case SyntaxKind.BinaryExpression:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BindBinaryExpression((BinaryExpressionSyntax)syntax);
 
                 default:
@@ -35,13 +41,19 @@ namespace Minsk.CodeAnalysis.Binding
 
         private BoundExpression BindLiteralExpression(LiteralExpressionSyntax syntax)
         {
-            var value = syntax.LiteralToken.Value as int? ?? 0;
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
+            var value = syntax.Value ?? 0;
+
+            Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
 
             return new BoundLiteralExpression(value);
         }
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
         {
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
             var boundOperand = BindExpression(syntax.Operand);
             var boundOperatorKind = BindUnaryOperatorKind(syntax.OperatorToken.Kind, boundOperand.Type);
 
@@ -55,22 +67,29 @@ namespace Minsk.CodeAnalysis.Binding
                 return boundOperand;
             }
 
+            Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+
             return new BoundUnaryExpression(boundOperatorKind.Value, boundOperand);
         }
 
         private BoundUnaryOperatorKind? BindUnaryOperatorKind(SyntaxKind kind, Type operandType)
         {
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
             if (operandType != typeof(int))
             {
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                 return null;
             }
 
             switch (kind)
             {
                 case SyntaxKind.PlusToken:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BoundUnaryOperatorKind.Identity;
 
                 case SyntaxKind.MinusToken:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BoundUnaryOperatorKind.Negation;
 
                 default:
@@ -80,6 +99,8 @@ namespace Minsk.CodeAnalysis.Binding
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax syntax)
         {
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
             var boundLeft = BindExpression(syntax.Left);
             var boundRight = BindExpression(syntax.Right);
             var boundOperatorKind = BindBinaryOperatorKind(syntax.OperatorToken.Kind, boundLeft.Type, boundRight.Type);
@@ -90,7 +111,7 @@ namespace Minsk.CodeAnalysis.Binding
 
                 // NOTE(crhodes)
                 // Return something for now to avoid cascading errors.
-
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                 return boundLeft;
             }
 
@@ -99,24 +120,32 @@ namespace Minsk.CodeAnalysis.Binding
 
         private BoundBinaryOperatorKind? BindBinaryOperatorKind(SyntaxKind kind, Type leftType, Type rightType )
         {
+            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+
             if (leftType != typeof(int)
                 || rightType != typeof(int))
             {
+                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+
                 return null;
             }
 
             switch (kind)
             {
                 case SyntaxKind.PlusToken:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BoundBinaryOperatorKind.Addition;
 
                 case SyntaxKind.MinusToken:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BoundBinaryOperatorKind.Subtraction;
 
                 case SyntaxKind.StarToken:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BoundBinaryOperatorKind.Multiplication;
 
                 case SyntaxKind.SlashToken:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BoundBinaryOperatorKind.Division;
 
                 default:

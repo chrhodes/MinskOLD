@@ -8,6 +8,7 @@ namespace Minsk.CodeAnalysis.Syntax
         EndOfFileToken,
         WhiteSpaceToken,
         NumberToken,
+        IdentifierToken,
 
         // Operators
 
@@ -17,6 +18,11 @@ namespace Minsk.CodeAnalysis.Syntax
         SlashToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
+
+        // Keywords
+
+        FalseKeyword,
+        TrueKeyword,
 
         // Expressions
 

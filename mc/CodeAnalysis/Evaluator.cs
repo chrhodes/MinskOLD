@@ -1,7 +1,6 @@
-using Minsk.CodeAnalysis.Binding;
-using Minsk.CodeAnalysis.Syntax;
-
 using System;
+
+using Minsk.CodeAnalysis.Binding;
 
 using VNC;
 
@@ -20,14 +19,14 @@ namespace Minsk.CodeAnalysis
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
-        public int Evaluate()
+        public object Evaluate()
         {
             Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
 
             return EvaluateExpression(_root);
         }
 
-        private int EvaluateExpression(BoundExpression node)
+        private object EvaluateExpression(BoundExpression node)
         {
             Int64 startTicks = Log.Trace($"Enter node:{node}", Common.LOG_CATEGORY);
 
@@ -35,12 +34,12 @@ namespace Minsk.CodeAnalysis
             {
                 Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                return (int)n.Value;
+                return n.Value;
             }
 
             if (node is BoundUnaryExpression u)
             {
-                var operand = EvaluateExpression(u.Operand);
+                var operand = (int) EvaluateExpression(u.Operand);
 
                 switch (u.OperatorKind)
                 {
@@ -61,8 +60,8 @@ namespace Minsk.CodeAnalysis
 
             if (node is BoundBinaryExpression b)
             {
-                var left = EvaluateExpression(b.Left);
-                var right = EvaluateExpression(b.Right);
+                var left = (int)EvaluateExpression(b.Left);
+                var right = (int)EvaluateExpression(b.Right);
 
                 switch (b.OperatorKind)
                 {
