@@ -26,18 +26,20 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public IEnumerable<string> Diagnostics => _diagnostics;
 
-        private char Current
+        private char Current => Peek(0);
+        private char Lookahead => Peek(1);
+
+        private char Peek(int offset)
         {
-            get
+            var index = _position + offset;
+
+            if (index >= _text.Length)
             {
-                if (_position >= _text.Length)
-                {
-                    return '\0';
-                }
-                else
-                {
-                    return _text[_position];
-                }
+                return '\0';
+            }
+            else
+            {
+                return _text[_position];
             }
         }
 
@@ -147,6 +149,30 @@ namespace Minsk.CodeAnalysis.Syntax
                     Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
 
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
+
+                case '!':
+                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
+
+                    return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
+
+                case '&':
+                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
+
+                    if (Lookahead == '&')
+                    {
+                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, _position += 2, "&&", null);
+                    }
+                    break;
+
+                case '|':
+                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
+
+                    if (Lookahead == '|')
+                    {
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "||", null);
+                    }
+                    break;
+
             }
 
             _diagnostics.Add($"ERROR: Bad character input: '{Current}'");

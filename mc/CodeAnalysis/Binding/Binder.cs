@@ -52,7 +52,7 @@ namespace Minsk.CodeAnalysis.Binding
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
         {
-            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.Trace($"Enter syntax:{syntax}", Common.LOG_CATEGORY);
 
             var boundOperand = BindExpression(syntax.Operand);
             var boundOperatorKind = BindUnaryOperatorKind(syntax.OperatorToken.Kind, boundOperand.Type);
@@ -74,27 +74,37 @@ namespace Minsk.CodeAnalysis.Binding
 
         private BoundUnaryOperatorKind? BindUnaryOperatorKind(SyntaxKind kind, Type operandType)
         {
-            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.Trace($"Enter kind:{kind} operandType:{operandType}", Common.LOG_CATEGORY);
 
-            if (operandType != typeof(int))
+            if (operandType == typeof(int))
             {
-                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-                return null;
+                switch (kind)
+                {
+                    case SyntaxKind.PlusToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundUnaryOperatorKind.Identity;
+
+                    case SyntaxKind.MinusToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundUnaryOperatorKind.Negation;
+
+                    //default:
+                    //    throw new Exception($"Unexpected Unary operator {kind}");
+                }
             }
 
-            switch (kind)
+            if (operandType == typeof(Boolean))
             {
-                case SyntaxKind.PlusToken:
-                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-                    return BoundUnaryOperatorKind.Identity;
+                switch (kind)
+                {
+                    case SyntaxKind.BangToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundUnaryOperatorKind.LogicalNegation;
 
-                case SyntaxKind.MinusToken:
-                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-                    return BoundUnaryOperatorKind.Negation;
-
-                default:
-                    throw new Exception($"Unexpected Unary operator {kind}");
+                }
             }
+
+            return null;
         }
 
         private BoundExpression BindBinaryExpression(BinaryExpressionSyntax syntax)
@@ -122,36 +132,52 @@ namespace Minsk.CodeAnalysis.Binding
         {
             Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
 
-            if (leftType != typeof(int)
-                || rightType != typeof(int))
+            if ((leftType == typeof(int))
+                && (rightType == typeof(int)))
             {
-                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                switch (kind)
+                {
+                    case SyntaxKind.PlusToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundBinaryOperatorKind.Addition;
 
-                return null;
+                    case SyntaxKind.MinusToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundBinaryOperatorKind.Subtraction;
+
+                    case SyntaxKind.StarToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundBinaryOperatorKind.Multiplication;
+
+                    case SyntaxKind.SlashToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundBinaryOperatorKind.Division;
+
+                    //default:
+                    //    throw new Exception($"Unexpected Binary operator {kind}");
+
+                }
             }
 
-            switch (kind)
+            if ((leftType == typeof(Boolean))
+                && (rightType == typeof(Boolean)))
             {
-                case SyntaxKind.PlusToken:
-                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-                    return BoundBinaryOperatorKind.Addition;
+                switch (kind)
+                {
+                    case SyntaxKind.AmpersandAmpersandToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundBinaryOperatorKind.LogicalAnd;
 
-                case SyntaxKind.MinusToken:
-                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-                    return BoundBinaryOperatorKind.Subtraction;
+                    case SyntaxKind.PipePipeToken:
+                        Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return BoundBinaryOperatorKind.LogicalOr;
 
-                case SyntaxKind.StarToken:
-                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-                    return BoundBinaryOperatorKind.Multiplication;
-
-                case SyntaxKind.SlashToken:
-                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-                    return BoundBinaryOperatorKind.Division;
-
-                default:
-                    throw new Exception($"Unexpected Binary operator {kind}");
-
+                }
             }
+
+            Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+
+            return null;
         }
 
     }

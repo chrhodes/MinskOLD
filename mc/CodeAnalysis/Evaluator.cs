@@ -39,19 +39,24 @@ namespace Minsk.CodeAnalysis
 
             if (node is BoundUnaryExpression u)
             {
-                var operand = (int) EvaluateExpression(u.Operand);
+                var operand = EvaluateExpression(u.Operand);
 
                 switch (u.OperatorKind)
                 {
                     case BoundUnaryOperatorKind.Identity:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                        return operand;
+                        return (int)operand;
 
                     case BoundUnaryOperatorKind.Negation:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                        return -operand;
+                        return -(int)operand;
+
+                    case BoundUnaryOperatorKind.LogicalNegation:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return !(Boolean)operand;
 
                     default:
                         throw new Exception($"Unexpected Unary Operator {u.OperatorKind}");
@@ -60,30 +65,42 @@ namespace Minsk.CodeAnalysis
 
             if (node is BoundBinaryExpression b)
             {
-                var left = (int)EvaluateExpression(b.Left);
-                var right = (int)EvaluateExpression(b.Right);
+                var left = EvaluateExpression(b.Left);
+                var right = EvaluateExpression(b.Right);
 
                 switch (b.OperatorKind)
                 {
                     case BoundBinaryOperatorKind.Addition:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                        return left + right;
+                        return (int)left + (int)right;
 
                     case BoundBinaryOperatorKind.Subtraction:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                        return left - right;
+                        return (int)left - (int)right;
 
                     case BoundBinaryOperatorKind.Multiplication:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                        return left * right;
+                        return (int)left * (int)right;
 
                     case BoundBinaryOperatorKind.Division:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                        return left / right;
+                        return (int)left / (int)right;
+
+
+                    case BoundBinaryOperatorKind.LogicalAnd:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return (Boolean)left && (Boolean)right;
+
+
+                    case BoundBinaryOperatorKind.LogicalOr:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return (Boolean)left || (Boolean)right;
 
                     default:
                         throw new Exception($"Unexpected Binary Operator {b.OperatorKind}");

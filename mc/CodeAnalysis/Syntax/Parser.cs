@@ -155,7 +155,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 case SyntaxKind.FalseKeyword:
                     var keywordToken = NextToken();
 
-                    var value = Current.Kind == SyntaxKind.TrueKeyword;
+                    var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
 
                     Log.Trace($"Exit (LiteralExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
 

@@ -9,6 +9,9 @@ namespace Minsk.CodeAnalysis.Syntax
         WhiteSpaceToken,
         NumberToken,
         IdentifierToken,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
 
         // Operators
 
