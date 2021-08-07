@@ -13,8 +13,6 @@ namespace Minsk.CodeAnalysis
         private readonly string _text;
         private int _position;
 
-        // NOTE(crhodes)
-        // Handle errors
         private List<string> _diagnostics = new List<string>();
 
         public Lexer(string text)
@@ -55,10 +53,6 @@ namespace Minsk.CodeAnalysis
         public SyntaxToken Lex()
         {
             Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
-
-            // <numbers>
-            // + - / * ( )
-            // <whitespace>
 
             if (_position >= _text.Length)
             {

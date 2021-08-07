@@ -72,6 +72,8 @@ namespace Minsk.CodeAnalysis
 
             if (node is ParenthesizedExpressionSyntax p)
             {
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
                 return EvaluateExpression(p.Expression);
             }
 
