@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Minsk.CodeAnalysis
+namespace Minsk.CodeAnalysis.Syntax
 {
     // NOTE(crhodes)
     // Base type for all Syntax Nodes

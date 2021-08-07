@@ -1,14 +1,17 @@
+using Minsk.CodeAnalysis.Binding;
+using Minsk.CodeAnalysis.Syntax;
+
 using System;
 
 using VNC;
 
 namespace Minsk.CodeAnalysis
 {
-    public sealed class Evaluator
+    internal sealed class Evaluator
     {
-        private readonly ExpressionSyntax _root;
+        private readonly BoundExpression _root;
 
-        public Evaluator(ExpressionSyntax root)
+        public Evaluator(BoundExpression root)
         {
             Int64 startTicks = Log.CONSTRUCTOR($"Enter: root:{root}", Common.LOG_CATEGORY);
 
@@ -24,78 +27,76 @@ namespace Minsk.CodeAnalysis
             return EvaluateExpression(_root);
         }
 
-        private int EvaluateExpression(ExpressionSyntax node)
+        private int EvaluateExpression(BoundExpression node)
         {
             Int64 startTicks = Log.Trace($"Enter node:{node}", Common.LOG_CATEGORY);
 
-            if (node is LiteralExpressionSyntax n)
+            if (node is BoundLiteralExpression n)
             {
                 Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                return (int)n.LiteralToken.Value;
+                return (int)n.Value;
             }
 
-            if (node is UnaryExpressionSyntax u)
+            if (node is BoundUnaryExpression u)
             {
                 var operand = EvaluateExpression(u.Operand);
 
-                if (u.OperatorToken.Kind == SyntaxKind.PlusToken)
+                switch (u.OperatorKind)
                 {
-                    return operand;
-                }
+                    case BoundUnaryOperatorKind.Identity:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                else if (u.OperatorToken.Kind == SyntaxKind.MinusToken)
-                {
-                    return -operand;
-                }
+                        return operand;
 
-                else
-                {
-                    throw new Exception($"Unexpected Unary Operator {u.OperatorToken.Kind}");
+                    case BoundUnaryOperatorKind.Negation:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return -operand;
+
+                    default:
+                        throw new Exception($"Unexpected Unary Operator {u.OperatorKind}");
                 }
             }
 
-            if (node is BinaryExpressionSyntax b)
+            if (node is BoundBinaryExpression b)
             {
                 var left = EvaluateExpression(b.Left);
                 var right = EvaluateExpression(b.Right);
 
-                if (b.OperatorToken.Kind == SyntaxKind.PlusToken)
+                switch (b.OperatorKind)
                 {
-                    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                    case BoundBinaryOperatorKind.Addition:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                    return left + right;
-                }
-                else if (b.OperatorToken.Kind == SyntaxKind.MinusToken)
-                {
-                    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return left + right;
 
-                    return left - right;
-                }
-                else if (b.OperatorToken.Kind == SyntaxKind.StarToken)
-                {
-                    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                    case BoundBinaryOperatorKind.Subtraction:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                    return left * right;
-                }
-                else if (b.OperatorToken.Kind == SyntaxKind.SlashToken)
-                {
-                    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        return left - right;
 
-                    return left / right;
-                }
-                else
-                {
-                    throw new Exception($"Unexpected Binary Operator {b.OperatorToken.Kind}");
+                    case BoundBinaryOperatorKind.Multiplication:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return left * right;
+
+                    case BoundBinaryOperatorKind.Division:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return left / right;
+
+                    default:
+                        throw new Exception($"Unexpected Binary Operator {b.OperatorKind}");
                 }
             }
 
-            if (node is ParenthesizedExpressionSyntax p)
-            {
-                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+            //if (node is BoundParenthesizedExpression p)
+            //{
+            //    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                return EvaluateExpression(p.Expression);
-            }
+            //    return EvaluateExpression(p.Expression);
+            //}
 
             throw new Exception($"Unexpected node {node.Kind}");
         }

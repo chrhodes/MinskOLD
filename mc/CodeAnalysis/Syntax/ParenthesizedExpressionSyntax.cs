@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using VNC;
 
-namespace Minsk.CodeAnalysis
+namespace Minsk.CodeAnalysis.Syntax
 {
     internal sealed class ParenthesizedExpressionSyntax : ExpressionSyntax
     {
