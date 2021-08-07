@@ -5,7 +5,7 @@ using VNC;
 
 namespace Minsk.CodeAnalysis
 {
-    // // NOTE(crhodes)
+    //NOTE(crhodes)
     // Parser assembles the tokens into sentences
     // Parser produces Syntax Trees (sentences)
     // from the Syntax Tokens (words)
@@ -97,7 +97,24 @@ namespace Minsk.CodeAnalysis
 
         private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
-            var left = ParsePrimaryExpression();
+            Int64 startTicks = Log.Trace($"Enter parentPrecedence: {parentPrecedence}", Common.LOG_CATEGORY);
+
+            ExpressionSyntax left;
+
+            var unaryOperatorPrecedence = Current.Kind.GetUnaryOperatorPrecedence();
+
+            if (unaryOperatorPrecedence != 0
+                && unaryOperatorPrecedence >= parentPrecedence)
+            {
+                var operatorToken = NextToken();
+                var operand = ParseExpression(unaryOperatorPrecedence);
+
+                left = new UnaryExpressionSyntax(operatorToken, operand);
+            }
+            else
+            {
+                left = ParsePrimaryExpression();
+            }
 
             while (true)
             {
@@ -114,8 +131,32 @@ namespace Minsk.CodeAnalysis
                 left = new BinaryExpressionSyntax(left, operatorToken, right);
             }
 
+            Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
             return left;
         }
+
+        //private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
+        //{
+        //    var left = ParsePrimaryExpression();
+
+        //    while (true)
+        //    {
+        //        var precedence = Current.Kind.GetBinaryOperatorPrecedence();
+
+        //        if (precedence == 0
+        //            || precedence <= parentPrecedence)
+        //        {
+        //            break;
+        //        }
+
+        //        var operatorToken = NextToken();
+        //        var right = ParseExpression(precedence);
+        //        left = new BinaryExpressionSyntax(left, operatorToken, right);
+        //    }
+
+        //    return left;
+        //}
 
         private ExpressionSyntax ParsePrimaryExpression()
         {
@@ -131,78 +172,6 @@ namespace Minsk.CodeAnalysis
 
             return new LiteralExpressionSyntax(numberToken);
         }
-
-
-        // NOTE(crhodes)
-        // ParseTerm and ParseFactor work when you only have a few operators
-        // Need a different approach when many operators, unary operators, etc.
-
-        //private ExpressionSyntax ParseExpression()
-        //{
-        //    Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
-
-        //    return ParseTerm();
-        //}
-
-        //private ExpressionSyntax ParseFactor()
-        //{
-        //    Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
-
-        //    var left = ParsePrimaryExpression();
-
-        //    while (Current.Kind == SyntaxKind.StarToken
-        //        || Current.Kind == SyntaxKind.SlashToken)
-        //    {
-        //        var operatorToken = NextToken();
-        //        var right = ParsePrimaryExpression();
-        //        left = new BinaryExpressionSyntax(left, operatorToken, right);
-        //    }
-
-        //    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
-
-        //    return left;
-        //}
-
-        //private ExpressionSyntax ParsePrimaryExpression()
-        //{
-        //    Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
-
-        //    if (Current.Kind == SyntaxKind.OpenParenthesisToken)
-        //    {
-        //        var left = NextToken();
-        //        var expression = ParseExpression();
-        //        var right = MatchToken(SyntaxKind.CloseParenthesisToken);
-
-        //        Log.Trace($"Exit ParenthesizedExpressionSyntax", Common.LOG_CATEGORY, startTicks);
-
-        //        return new ParenthesizedExpressionSyntax(left, expression, right);
-        //    }
-
-        //    var numberToken = MatchToken(SyntaxKind.NumberToken);
-
-        //    Log.Trace($"Exit LiteralExpressionSyntax", Common.LOG_CATEGORY, startTicks);
-
-        //    return new LiteralExpressionSyntax(numberToken);
-        //}
-
-        //private ExpressionSyntax ParseTerm()
-        //{
-        //    Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
-
-        //    var left = ParseFactor();
-
-        //    while (Current.Kind == SyntaxKind.PlusToken
-        //        || Current.Kind == SyntaxKind.MinusToken)
-        //    {
-        //        var operatorToken = NextToken();
-        //        var right = ParseFactor();
-        //        left = new BinaryExpressionSyntax(left, operatorToken, right);
-        //    }
-
-        //    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
-
-        //    return left;
-        //}
 
         // NOTE(crhodes)
         // This lets you look ahead to see how to parse what you have already seen.

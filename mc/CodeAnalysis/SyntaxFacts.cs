@@ -3,6 +3,22 @@ namespace Minsk.CodeAnalysis
 
     internal static class SyntaxFacts
     {
+        // NOTE(crhodes)
+        // There is interaction between Unary and Binary Operators
+        // 3 > 2, 1
+        public static int GetUnaryOperatorPrecedence(this SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                    return 3;
+
+                default:
+                    return 0;
+            }
+        }
+
         public static int GetBinaryOperatorPrecedence(this SyntaxKind kind)
         {
             switch (kind)
