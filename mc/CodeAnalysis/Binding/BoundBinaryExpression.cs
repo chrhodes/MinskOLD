@@ -12,7 +12,6 @@ namespace Minsk.CodeAnalysis.Binding
         {
             Int64 startTicks = Log.CONSTRUCTOR($"Enter: left: {left} op: {op} right: {right}", Common.LOG_CATEGORY);
 
-
             Left = left;
             Op = op;
             Right = right;
@@ -24,7 +23,7 @@ namespace Minsk.CodeAnalysis.Binding
         public BoundBinaryOperator Op { get; }
         public BoundExpression Right { get; }
 
-        public override Type Type => Left.Type;
+        public override Type Type => Op.Type;
 
         public override BoundNodeKind Kind => BoundNodeKind.BinaryExpression;
     }

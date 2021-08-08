@@ -102,6 +102,16 @@ namespace Minsk.CodeAnalysis
 
                         return (Boolean)left || (Boolean)right;
 
+                    case BoundBinaryOperatorKind.Equals:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return Equals(left, right);
+
+                    case BoundBinaryOperatorKind.NotEquals:
+                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                        return !Equals(left, right);
+
                     default:
                         throw new Exception($"Unexpected Binary Operator {b.Op}");
                 }

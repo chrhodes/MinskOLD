@@ -150,29 +150,51 @@ namespace Minsk.CodeAnalysis.Syntax
 
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, _position++, ")", null);
 
-                case '!':
-                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
+                //case '!':
+                //    Log.Trace($"Exit (new BangToken)", Common.LOG_CATEGORY, startTicks);
 
-                    return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
+                //    return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
 
                 case '&':
-                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
-
                     if (Lookahead == '&')
                     {
+                        Log.Trace($"Exit (new AmpersandAmpersandToken)", Common.LOG_CATEGORY, startTicks);
+
                         return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, _position += 2, "&&", null);
                     }
                     break;
 
                 case '|':
-                    Log.Trace($"Exit (new CloseParenthesisToken)", Common.LOG_CATEGORY, startTicks);
-
                     if (Lookahead == '|')
                     {
+                        Log.Trace($"Exit (new PipePipeToken)", Common.LOG_CATEGORY, startTicks);
+
                         return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "||", null);
                     }
                     break;
 
+                case '=':
+                    if (Lookahead == '=')
+                    {
+                        Log.Trace($"Exit (new EqualsEqualsToken)", Common.LOG_CATEGORY, startTicks);
+
+                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, _position += 2, "==", null);
+                    }
+                    break;
+
+                case '!':
+                    if (Lookahead == '=')
+                    {
+                        Log.Trace($"Exit (new BangEqualsToken)", Common.LOG_CATEGORY, startTicks);
+
+                        return new SyntaxToken(SyntaxKind.BangEqualsToken, _position += 2, "|=", null);
+                    }
+                    else
+                    {
+                        Log.Trace($"Exit (new BangToken)", Common.LOG_CATEGORY, startTicks);
+
+                        return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
+                    }
             }
 
             _diagnostics.Add($"ERROR: Bad character input: '{Current}'");

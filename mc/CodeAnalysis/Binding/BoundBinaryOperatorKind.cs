@@ -13,6 +13,8 @@ namespace Minsk.CodeAnalysis.Binding
         Division,
 
         LogicalAnd,
-        LogicalOr
+        LogicalOr,
+        Equals,
+        NotEquals
     }
 }

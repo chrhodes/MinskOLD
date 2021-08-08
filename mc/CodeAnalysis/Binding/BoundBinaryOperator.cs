@@ -11,13 +11,18 @@ namespace Minsk.CodeAnalysis.Binding
         {
         }
 
+        public BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type operandType, Type resultType)
+            : this(syntaxKind, kind, operandType, operandType, resultType)
+        {
+        }
+
         public BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightType, Type resultType)
         {
             SyntaxKind = syntaxKind;
             Kind = kind;
             LeftType = leftType;
             RightType = rightType;
-            ResultType = resultType;
+            Type = resultType;
         }
 
         public SyntaxKind SyntaxKind { get; }
@@ -26,7 +31,7 @@ namespace Minsk.CodeAnalysis.Binding
         public Type LeftType { get; }
         public Type RightType { get; }
 
-        public Type ResultType { get; }
+        public Type Type { get; }
 
         private static BoundBinaryOperator[] _operators =
         {
@@ -35,8 +40,13 @@ namespace Minsk.CodeAnalysis.Binding
             new BoundBinaryOperator(SyntaxKind.StarToken, BoundBinaryOperatorKind.Multiplication, typeof(int)),
             new BoundBinaryOperator(SyntaxKind.SlashToken, BoundBinaryOperatorKind.Division, typeof(int)),
 
+            new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(int), typeof(Boolean)),
+            new BoundBinaryOperator(SyntaxKind.BangEqualsToken, BoundBinaryOperatorKind.NotEquals, typeof(int), typeof(Boolean)),
+
             new BoundBinaryOperator(SyntaxKind.AmpersandAmpersandToken, BoundBinaryOperatorKind.LogicalAnd, typeof(Boolean)),
             new BoundBinaryOperator(SyntaxKind.PipePipeToken, BoundBinaryOperatorKind.LogicalOr, typeof(Boolean)),
+            new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(Boolean)),
+            new BoundBinaryOperator(SyntaxKind.BangEqualsToken, BoundBinaryOperatorKind.NotEquals, typeof(Boolean)),
         };
 
         public static BoundBinaryOperator Bind(SyntaxKind syntaxKind, Type leftType, Type rightType)
