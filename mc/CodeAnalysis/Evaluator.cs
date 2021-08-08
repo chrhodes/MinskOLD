@@ -41,7 +41,7 @@ namespace Minsk.CodeAnalysis
             {
                 var operand = EvaluateExpression(u.Operand);
 
-                switch (u.OperatorKind)
+                switch (u.Op.Kind)
                 {
                     case BoundUnaryOperatorKind.Identity:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
@@ -59,7 +59,7 @@ namespace Minsk.CodeAnalysis
                         return !(Boolean)operand;
 
                     default:
-                        throw new Exception($"Unexpected Unary Operator {u.OperatorKind}");
+                        throw new Exception($"Unexpected Unary Operator {u.Op}");
                 }
             }
 
@@ -68,7 +68,7 @@ namespace Minsk.CodeAnalysis
                 var left = EvaluateExpression(b.Left);
                 var right = EvaluateExpression(b.Right);
 
-                switch (b.OperatorKind)
+                switch (b.Op.Kind)
                 {
                     case BoundBinaryOperatorKind.Addition:
                         Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
@@ -103,7 +103,7 @@ namespace Minsk.CodeAnalysis
                         return (Boolean)left || (Boolean)right;
 
                     default:
-                        throw new Exception($"Unexpected Binary Operator {b.OperatorKind}");
+                        throw new Exception($"Unexpected Binary Operator {b.Op}");
                 }
             }
 

@@ -6,17 +6,17 @@ namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class BoundUnaryExpression : BoundExpression
     {
-        public BoundUnaryExpression(BoundUnaryOperatorKind operatorKind, BoundExpression operand)
+        public BoundUnaryExpression(BoundUnaryOperator op, BoundExpression operand)
         {
-            Int64 startTicks = Log.CONSTRUCTOR($"Enter: operatorKind:{operatorKind} operand:{operand}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.CONSTRUCTOR($"Enter: op:{op} operand:{operand}", Common.LOG_CATEGORY);
 
-            OperatorKind = operatorKind;
+            Op= op;
             Operand = operand;
 
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
-        public BoundUnaryOperatorKind OperatorKind { get; }
+        public BoundUnaryOperator Op { get; }
         public BoundExpression Operand { get; }
 
         public override BoundNodeKind Kind => BoundNodeKind.UnaryExpression;
