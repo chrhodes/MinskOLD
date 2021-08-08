@@ -1,6 +1,8 @@
 using System;
+using System.Linq;
 
 using Minsk.CodeAnalysis.Binding;
+using Minsk.CodeAnalysis.Syntax;
 
 using VNC;
 

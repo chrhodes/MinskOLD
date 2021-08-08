@@ -33,6 +33,10 @@ namespace Minsk.CodeAnalysis.Binding
                     Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
                     return BindBinaryExpression((BinaryExpressionSyntax)syntax);
 
+                case SyntaxKind.ParenthesizedExpression:
+                    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+                    return BindExpression(((ParenthesizedExpressionSyntax)syntax).Expression);
+
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
 
@@ -92,94 +96,6 @@ namespace Minsk.CodeAnalysis.Binding
 
             return new BoundBinaryExpression(boundLeft, boundOperator, boundRight);
         }
-
-        //private BoundUnaryOperatorKind? BindUnaryOperatorKind(SyntaxKind kind, Type operandType)
-        //{
-        //    Int64 startTicks = Log.Trace($"Enter kind:{kind} operandType:{operandType}", Common.LOG_CATEGORY);
-
-        //    if (operandType == typeof(int))
-        //    {
-        //        switch (kind)
-        //        {
-        //            case SyntaxKind.PlusToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundUnaryOperatorKind.Identity;
-
-        //            case SyntaxKind.MinusToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundUnaryOperatorKind.Negation;
-
-        //            //default:
-        //            //    throw new Exception($"Unexpected Unary operator {kind}");
-        //        }
-        //    }
-
-        //    if (operandType == typeof(Boolean))
-        //    {
-        //        switch (kind)
-        //        {
-        //            case SyntaxKind.BangToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundUnaryOperatorKind.LogicalNegation;
-
-        //        }
-        //    }
-
-        //    return null;
-        //}
-
-
-        //private BoundBinaryOperatorKind? BindBinaryOperatorKind(SyntaxKind kind, Type leftType, Type rightType )
-        //{
-        //    Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
-
-        //    if ((leftType == typeof(int))
-        //        && (rightType == typeof(int)))
-        //    {
-        //        switch (kind)
-        //        {
-        //            case SyntaxKind.PlusToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundBinaryOperatorKind.Addition;
-
-        //            case SyntaxKind.MinusToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundBinaryOperatorKind.Subtraction;
-
-        //            case SyntaxKind.StarToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundBinaryOperatorKind.Multiplication;
-
-        //            case SyntaxKind.SlashToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundBinaryOperatorKind.Division;
-
-        //            //default:
-        //            //    throw new Exception($"Unexpected Binary operator {kind}");
-
-        //        }
-        //    }
-
-        //    if ((leftType == typeof(Boolean))
-        //        && (rightType == typeof(Boolean)))
-        //    {
-        //        switch (kind)
-        //        {
-        //            case SyntaxKind.AmpersandAmpersandToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundBinaryOperatorKind.LogicalAnd;
-
-        //            case SyntaxKind.PipePipeToken:
-        //                Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-        //                return BoundBinaryOperatorKind.LogicalOr;
-
-        //        }
-        //    }
-
-        //    Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-        //    return null;
-        //}
 
     }
 }

@@ -50,8 +50,12 @@ namespace Minsk
                 }
 
                 var syntaxTree = SyntaxTree.Parse(line);
-                var binder = new Binder();
-                var boundExpression = binder.BindExpression(syntaxTree.Root);
+                var compilation = new Compilation(syntaxTree);
+
+                var result = compilation.Evaluate();
+
+
+                IReadOnlyList<string> diagnostics = result.Diagnostics;
 
                 if (showTree)
                 {
@@ -64,14 +68,10 @@ namespace Minsk
                     Console.ForegroundColor = color;
                 }
 
-                IReadOnlyList<string> diagnostics = syntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
 
                 if (!diagnostics.Any())
                 {
-                    var e = new Evaluator(boundExpression);
-
-                    var result = e.Evaluate();
-                    Console.WriteLine(result);
+                    Console.WriteLine(result.Value);
                 }
                 else
                 {
@@ -131,7 +131,7 @@ namespace Minsk
 
             Console.WriteLine();
 
-            indent += isLast ? "   " : "│   ";
+            indent += isLast ? "   " : "│  ";
 
             var lastChild = node.GetChildren().LastOrDefault();
 
