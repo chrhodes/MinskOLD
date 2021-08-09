@@ -42,7 +42,7 @@ namespace Minsk.CodeAnalysis
 
             Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
-            return new EvaluationResult(Array.Empty<string>(), value);
+            return new EvaluationResult(Array.Empty<Diagnostic>(), value);
         }
     }
 }

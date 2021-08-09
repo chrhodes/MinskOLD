@@ -14,7 +14,7 @@ namespace Minsk.CodeAnalysis.Syntax
     {
         private readonly SyntaxToken[] _tokens;
 
-        private List<string> _diagnostics = new List<string>();
+        private DiagnosticBag _diagnostics = new DiagnosticBag();
 
         private int _position;
 
@@ -46,7 +46,7 @@ namespace Minsk.CodeAnalysis.Syntax
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
-        public IEnumerable<string> Diagnostics => _diagnostics;
+        public DiagnosticBag Diagnostics => _diagnostics;
 
         private SyntaxToken Current => Peek(0);
 
@@ -73,12 +73,12 @@ namespace Minsk.CodeAnalysis.Syntax
                 return NextToken();
             }
 
-            _diagnostics.Add($"ERROR: Unexpected token: <{Current.Kind}>, expected <{kind}>");
+            _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
+
+            Log.Trace($"Exit: ERROR: Unexpected token: <{Current.Kind}>, expected <{kind}>", Common.LOG_CATEGORY, startTicks);
 
             // NOTE(crhodes)
             // This is super useful because ...
-
-            Log.Trace($"Exit: ERROR: Unexpected token: <{Current.Kind}>, expected <{kind}>", Common.LOG_CATEGORY, startTicks);
 
             return new SyntaxToken(kind, Current.Position, null, null);
         }

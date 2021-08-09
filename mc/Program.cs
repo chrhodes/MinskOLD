@@ -54,18 +54,15 @@ namespace Minsk
 
                 var result = compilation.Evaluate();
 
-
-                IReadOnlyList<string> diagnostics = result.Diagnostics;
+                var diagnostics = result.Diagnostics;
 
                 if (showTree)
                 {
-                    var color = Console.ForegroundColor;
-
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
 
                     PrettyPrint2(syntaxTree.Root);
 
-                    Console.ForegroundColor = color;
+                    Console.ResetColor();
                 }
 
 
@@ -79,10 +76,29 @@ namespace Minsk
 
                     foreach (var diagnostic in diagnostics)
                     {
+                        Console.WriteLine();
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(diagnostic);
+
+
+                        var prefix = line.Substring(0, diagnostic.Span.Start);
+                        var error = line.Substring(diagnostic.Span.Start, diagnostic.Span.Length);
+                        var suffix = line.Substring(diagnostic.Span.End);
+
+                        Console.ResetColor();
+                        Console.Write("    ");
+                        Console.Write(prefix);
+
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write(error);
+
+                        Console.ResetColor();
+                        Console.Write(suffix);
+                        Console.WriteLine();
                     }
 
                     Console.ResetColor();
+                    Console.WriteLine();
                 }
 
                 Log.APPLICATION_START($"Exit", Common.LOG_CATEGORY, startTicks);
