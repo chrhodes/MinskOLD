@@ -1,8 +1,7 @@
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 using Minsk.CodeAnalysis.Binding;
-using Minsk.CodeAnalysis.Syntax;
 
 using VNC;
 
@@ -11,32 +10,54 @@ namespace Minsk.CodeAnalysis
     internal sealed class Evaluator
     {
         private readonly BoundExpression _root;
+        private readonly Dictionary<VariableSymbol, object> _variables;
 
-        public Evaluator(BoundExpression root)
+        public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
         {
             Int64 startTicks = Log.CONSTRUCTOR($"Enter: root:{root}", Common.LOG_CATEGORY);
 
             _root = root;
+            _variables = variables;
 
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
         public object Evaluate()
         {
-            Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.Trace21($"Enter", Common.LOG_CATEGORY);
+            Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
             return EvaluateExpression(_root);
         }
 
         private object EvaluateExpression(BoundExpression node)
         {
-            Int64 startTicks = Log.Trace($"Enter node:{node}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.Trace21($"Enter node: {node}", Common.LOG_CATEGORY);
 
             if (node is BoundLiteralExpression n)
             {
-                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.Trace21($"Exit n.Value:{n.Value}", Common.LOG_CATEGORY, startTicks);
 
                 return n.Value;
+            }
+
+            if (node is BoundVariableExpression v)
+            {
+                var value = _variables[v.Variable];
+
+                Log.Trace21($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+
+                return value;
+            }
+
+            if (node is BoundAssignmentExpression a)
+            {
+                var value = EvaluateExpression(a.Expression);
+                _variables[a.Variable] = value;
+
+                Log.Trace21($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+
+                return value;
             }
 
             if (node is BoundUnaryExpression u)
@@ -46,17 +67,17 @@ namespace Minsk.CodeAnalysis
                 switch (u.Op.Kind)
                 {
                     case BoundUnaryOperatorKind.Identity:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit operand:{operand}", Common.LOG_CATEGORY, startTicks);
 
                         return (int)operand;
 
                     case BoundUnaryOperatorKind.Negation:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit operand:{operand}", Common.LOG_CATEGORY, startTicks);
 
                         return -(int)operand;
 
                     case BoundUnaryOperatorKind.LogicalNegation:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit operand:{operand}", Common.LOG_CATEGORY, startTicks);
 
                         return !(Boolean)operand;
 
@@ -73,44 +94,42 @@ namespace Minsk.CodeAnalysis
                 switch (b.Op.Kind)
                 {
                     case BoundBinaryOperatorKind.Addition:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return (int)left + (int)right;
 
                     case BoundBinaryOperatorKind.Subtraction:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return (int)left - (int)right;
 
                     case BoundBinaryOperatorKind.Multiplication:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return (int)left * (int)right;
 
                     case BoundBinaryOperatorKind.Division:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return (int)left / (int)right;
 
-
                     case BoundBinaryOperatorKind.LogicalAnd:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return (Boolean)left && (Boolean)right;
 
-
                     case BoundBinaryOperatorKind.LogicalOr:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return (Boolean)left || (Boolean)right;
 
                     case BoundBinaryOperatorKind.Equals:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return Equals(left, right);
 
                     case BoundBinaryOperatorKind.NotEquals:
-                        Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                        Log.Trace21($"Exit", Common.LOG_CATEGORY, startTicks);
 
                         return !Equals(left, right);
 

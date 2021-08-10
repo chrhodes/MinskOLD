@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Minsk.CodeAnalysis.Syntax.AssignmentExpressionSyntax">
+    <Position X="0.5" Y="0.75" Width="7.25" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAABAAAAAAAAAQAAAAAAAQAAQAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\AssignmentExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.BinaryExpressionSyntax">
+    <Position X="0.5" Y="3.5" Width="6.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAQAAACACAAAAAgAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\BinaryExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.ExpressionSyntax">
+    <Position X="11" Y="8.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\ExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.Lexer">
+    <Position X="0.5" Y="7.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AggAAIAAAAAEAIIAAACAAAAAAAAAAAAIAAAAgAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\Lexer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.LiteralExpressionSyntax">
+    <Position X="8" Y="0.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAEAAAAAAAAAAAAAAQAAAAAAgAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\LiteralExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.NameExpressionSyntax">
+    <Position X="12.5" Y="0.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAQAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\NameExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.ParenthesizedExpressionSyntax">
+    <Position X="16.5" Y="0.75" Width="8.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAQAIQAQAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\ParenthesizedExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.Parser">
+    <Position X="0.5" Y="11.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAooCAAAIAAEAAIAAACAAAAAAAQAIAAAAAAAgCAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\Parser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxFacts">
+    <Position X="3.5" Y="6.75" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAQAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxFacts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxNode">
+    <Position X="11" Y="15.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxToken">
+    <Position X="6.75" Y="11.75" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAgAAAAAAAAAAAAQAAAAAAgCAIAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxTree">
+    <Position X="4.25" Y="9" Width="6.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAiIAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.UnaryExpressionSyntax">
+    <Position X="25" Y="0.75" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAEAgAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\UnaryExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

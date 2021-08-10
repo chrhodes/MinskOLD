@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="FullSignature">
+  <Class Name="Minsk.CodeAnalysis.Compilation">
+    <Position X="1.25" Y="1.5" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Compilation.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Diagnostic">
+    <Position X="1" Y="4" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAIAIAAAA=</HashCode>
+      <FileName>CodeAnalysis\Diagnostic.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.DiagnosticBag">
+    <Position X="6" Y="2.75" Width="6.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAQAABAEAAAAAAAAAIQAAAAEAAAAAAAEhAA=</HashCode>
+      <FileName>CodeAnalysis\Diagnostic.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.EvaluationResult">
+    <Position X="7" Y="6.25" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\EvaluationResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Evaluator">
+    <Position X="1" Y="7" Width="4.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQAIAAAAAAAgAAAAAAAAAAAAAAAgAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Evaluator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Minsk.CodeAnalysis.TextSpan">
+    <Position X="7" Y="8.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAIAAAAAACAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\TextSpan.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

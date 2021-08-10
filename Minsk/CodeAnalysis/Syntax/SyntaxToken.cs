@@ -35,7 +35,8 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
-            Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.Trace16($"Enter", Common.LOG_CATEGORY);
+            Log.Trace16($"Exit", Common.LOG_CATEGORY, startTicks);
 
             return Enumerable.Empty<SyntaxNode>();
         }

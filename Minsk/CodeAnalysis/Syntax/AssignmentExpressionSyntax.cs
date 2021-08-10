@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+
+using VNC;
+
+namespace Minsk.CodeAnalysis.Syntax
+{
+    public sealed class AssignmentExpressionSyntax : ExpressionSyntax
+    {
+        public AssignmentExpressionSyntax(SyntaxToken identifierToken, SyntaxToken equalsToken, ExpressionSyntax expression)
+        {
+            IdentifierToken = identifierToken;
+            EqualsToken = equalsToken;
+            Expression = expression;
+        }
+
+        public SyntaxToken IdentifierToken { get; }
+        public SyntaxToken EqualsToken { get; }
+        public ExpressionSyntax Expression { get; }
+
+        public override SyntaxKind Kind => SyntaxKind.AssignmentExpression;
+
+        public override IEnumerable<SyntaxNode> GetChildren()
+        {
+            Int64 startTicks = Log.Trace16($"Enter/Exit", Common.LOG_CATEGORY);
+
+            yield return IdentifierToken;
+            yield return EqualsToken;
+            yield return Expression;
+        }
+    }
+}

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Minsk.CodeAnalysis.Binding;
@@ -11,36 +12,37 @@ namespace Minsk.CodeAnalysis
     public class Compilation
     {
 
-        public Compilation(SyntaxTree syntax)
+        public Compilation(SyntaxTree syntaxTree)
         {
-            Int64 startTicks = Log.CONSTRUCTOR($"Enter: syntax:{syntax}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.CONSTRUCTOR($"Enter: syntax:{syntaxTree}", Common.LOG_CATEGORY);
 
-            Syntax = syntax;
+            SyntaxTree = syntaxTree;
 
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
-        public SyntaxTree Syntax { get; }
+        public SyntaxTree SyntaxTree { get; }
 
-        public EvaluationResult Evaluate()
+        public EvaluationResult Evaluate(Dictionary<VariableSymbol, object> variables)
         {
-            Int64 startTicks = Log.Trace($"Enter", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.Trace13($"Enter", Common.LOG_CATEGORY);
 
-            var binder = new Binder();
-            var boundExpression = binder.BindExpression(Syntax.Root);
+            var binder = new Binder(variables);
+            var boundExpression = binder.BindExpression(SyntaxTree.Root);
 
-            var diagnostics = Syntax.Diagnostics.Concat(binder.Diagnostics).ToArray();
+            var diagnostics = SyntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
 
             if (diagnostics.Any())
             {
-                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.Trace13($"Exit", Common.LOG_CATEGORY, startTicks);
+
                 return new EvaluationResult(diagnostics, null);
             }
 
-            var evaluator = new Evaluator(boundExpression);
+            var evaluator = new Evaluator(boundExpression, variables);
             var value = evaluator.Evaluate();
 
-            Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+            Log.Trace13($"Exit", Common.LOG_CATEGORY, startTicks);
 
             return new EvaluationResult(Array.Empty<Diagnostic>(), value);
         }

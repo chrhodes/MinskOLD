@@ -1,7 +1,5 @@
 using System;
 
-using Minsk.CodeAnalysis.Syntax;
-
 using VNC;
 
 namespace Minsk.CodeAnalysis.Binding

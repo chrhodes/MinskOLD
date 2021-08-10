@@ -2,9 +2,6 @@ using System.Collections.Generic;
 
 namespace Minsk.CodeAnalysis.Syntax
 {
-    // NOTE(crhodes)
-    // Base type for all Syntax Nodes
-
     public abstract class SyntaxNode
     {
         public abstract SyntaxKind Kind { get; }

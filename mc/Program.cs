@@ -22,7 +22,8 @@ namespace Minsk
             // NOTE(crhodes)
             // Console Directive
 
-            bool showTree = false;
+            bool showTree = true;
+            var variables = new Dictionary<VariableSymbol, object>();
 
             while (true)
             {
@@ -51,10 +52,7 @@ namespace Minsk
 
                 var syntaxTree = SyntaxTree.Parse(line);
                 var compilation = new Compilation(syntaxTree);
-
-                var result = compilation.Evaluate();
-
-                var diagnostics = result.Diagnostics;
+                var result = compilation.Evaluate(variables);
 
                 if (showTree)
                 {
@@ -65,8 +63,7 @@ namespace Minsk
                     Console.ResetColor();
                 }
 
-
-                if (!diagnostics.Any())
+                if (!result.Diagnostics.Any())
                 {
                     Console.WriteLine(result.Value);
                 }
@@ -74,7 +71,7 @@ namespace Minsk
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
 
-                    foreach (var diagnostic in diagnostics)
+                    foreach (var diagnostic in result.Diagnostics)
                     {
                         Console.WriteLine();
                         Console.ForegroundColor = ConsoleColor.Red;
