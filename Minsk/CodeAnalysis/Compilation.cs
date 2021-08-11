@@ -25,7 +25,7 @@ namespace Minsk.CodeAnalysis
 
         public EvaluationResult Evaluate(Dictionary<VariableSymbol, object> variables)
         {
-            Int64 startTicks = Log.Trace13($"Enter", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.COMPILER($"Enter", Common.LOG_CATEGORY);
 
             var binder = new Binder(variables);
             var boundExpression = binder.BindExpression(SyntaxTree.Root);
@@ -34,7 +34,7 @@ namespace Minsk.CodeAnalysis
 
             if (diagnostics.Any())
             {
-                Log.Trace13($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.COMPILER($"Exit", Common.LOG_CATEGORY, startTicks);
 
                 return new EvaluationResult(diagnostics, null);
             }
@@ -42,7 +42,7 @@ namespace Minsk.CodeAnalysis
             var evaluator = new Evaluator(boundExpression, variables);
             var value = evaluator.Evaluate();
 
-            Log.Trace13($"Exit", Common.LOG_CATEGORY, startTicks);
+            Log.COMPILER($"Exit", Common.LOG_CATEGORY, startTicks);
 
             return new EvaluationResult(Array.Empty<Diagnostic>(), value);
         }

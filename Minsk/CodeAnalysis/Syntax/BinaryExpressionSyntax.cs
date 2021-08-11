@@ -26,8 +26,6 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
-            Int64 startTicks = Log.Trace16($"Enter/Exit", Common.LOG_CATEGORY);
-
             yield return Left;
             yield return OperatorToken;
             yield return Right;
