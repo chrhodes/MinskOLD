@@ -20,7 +20,21 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="VNC.Logging" Version="1.2.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\Minsk\Minsk.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CodeAnalysis\Binding\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="App.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
