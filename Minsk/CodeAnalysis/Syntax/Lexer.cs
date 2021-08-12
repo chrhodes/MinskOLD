@@ -199,7 +199,7 @@ namespace Minsk.CodeAnalysis.Syntax
                         Log.LEXER($"Exit (new BangEqualsToken)", Common.LOG_CATEGORY, startTicks);
 
                         _position += 2;
-                        return new SyntaxToken(SyntaxKind.BangEqualsToken, start, "|=", null);
+                        return new SyntaxToken(SyntaxKind.BangEqualsToken, start, "!=", null);
                     }
                     else
                     {
