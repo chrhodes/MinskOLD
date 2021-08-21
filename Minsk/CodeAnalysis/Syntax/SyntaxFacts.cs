@@ -3,7 +3,7 @@ using System;
 namespace Minsk.CodeAnalysis.Syntax
 {
 
-    internal static class SyntaxFacts
+    public static class SyntaxFacts
     {
         // NOTE(crhodes)
         // There is interaction between Unary and Binary Operators
@@ -63,6 +63,58 @@ namespace Minsk.CodeAnalysis.Syntax
                 default:
                     return SyntaxKind.IdentifierToken;
             }
+        }
+
+        public static string GetText(SyntaxKind kind)
+        {
+            switch (kind)
+            {
+                case SyntaxKind.BangToken:
+                    return "!";
+
+                case SyntaxKind.EqualsToken:
+                    return "=";
+
+                case SyntaxKind.AmpersandAmpersandToken:
+                    return "&&";
+
+                case SyntaxKind.PipePipeToken:
+                    return "||";
+
+                case SyntaxKind.EqualsEqualsToken:
+                    return "==";
+
+                case SyntaxKind.BangEqualsToken:
+                    return "!=";
+
+                case SyntaxKind.PlusToken:
+                    return "+";
+
+                case SyntaxKind.MinusToken:
+                    return "-";
+
+               case SyntaxKind.StarToken:
+                    return "*";
+
+               case SyntaxKind.SlashToken:
+                    return "/";
+
+               case SyntaxKind.OpenParenthesisToken:
+                    return "(";
+
+               case SyntaxKind.CloseParenthesisToken:
+                    return ")";
+
+                case SyntaxKind.FalseKeyWord:
+                    return "false";
+
+                case SyntaxKind.TrueKeyWord:
+                    return "true";
+
+                default:
+                    return null;
+            }
+
         }
     }
 }
