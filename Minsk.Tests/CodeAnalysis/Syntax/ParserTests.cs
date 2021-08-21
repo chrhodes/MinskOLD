@@ -85,7 +85,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                     yield return new object[] { op1, op2 };
 
                     // NOTE(crhodes)
-                    // Handing for debugging
+                    // Handy for debugging
                     //yield break;
                 }
             }
