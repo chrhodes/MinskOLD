@@ -16,10 +16,10 @@ namespace Minsk.CodeAnalysis.Binding
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
+        public override BoundNodeKind Kind => BoundNodeKind.UnaryExpression;
+        public override Type Type => Op.Type;
         public BoundUnaryOperator Op { get; }
         public BoundExpression Operand { get; }
 
-        public override BoundNodeKind Kind => BoundNodeKind.UnaryExpression;
-        public override Type Type => Op.Type;
     }
 }

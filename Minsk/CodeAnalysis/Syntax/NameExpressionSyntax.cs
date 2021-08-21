@@ -16,9 +16,9 @@ namespace Minsk.CodeAnalysis.Syntax
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
+        public override SyntaxKind Kind => SyntaxKind.NameExpression;
         public SyntaxToken IdentifierToken { get; }
 
-        public override SyntaxKind Kind => SyntaxKind.NameExpression;
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {

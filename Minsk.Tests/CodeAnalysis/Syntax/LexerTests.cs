@@ -151,7 +151,6 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             };
         }
 
-
         private static bool RequiresSeparator(SyntaxKind t1Kind, SyntaxKind t2Kind)
         {
             // HACK(crhodes)
@@ -187,26 +186,26 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 return true;
             }
 
-            if (t1Kind == SyntaxKind.EqualsToken
+            if (t1Kind == SyntaxKind.BangToken
                 && t2Kind == SyntaxKind.EqualsToken)
             {
                 return true;
             }
 
 
-            if (t1Kind == SyntaxKind.EqualsToken
+            if (t1Kind == SyntaxKind.BangToken
                 && t2Kind == SyntaxKind.EqualsEqualsToken)
             {
                 return true;
             }
 
-            if (t1Kind == SyntaxKind.BangToken
+            if (t1Kind == SyntaxKind.EqualsToken
                 && t2Kind == SyntaxKind.EqualsToken)
             {
                 return true;
             }
 
-            if (t1Kind == SyntaxKind.BangToken
+            if (t1Kind == SyntaxKind.EqualsToken
                 && t2Kind == SyntaxKind.EqualsEqualsToken)
             {
                 return true;

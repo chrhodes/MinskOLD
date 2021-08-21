@@ -17,12 +17,11 @@ namespace Minsk.CodeAnalysis.Binding
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
+        public override BoundNodeKind Kind => BoundNodeKind.BinaryExpression;
+        public override Type Type => Op.Type;
         public BoundExpression Left { get; }
         public BoundBinaryOperator Op { get; }
         public BoundExpression Right { get; }
 
-        public override Type Type => Op.Type;
-
-        public override BoundNodeKind Kind => BoundNodeKind.BinaryExpression;
     }
 }

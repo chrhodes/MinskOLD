@@ -6,12 +6,12 @@ namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class BoundUnaryOperator
     {
-        public BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType)
+        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType)
             : this(syntaxKind, kind, operandType, operandType)
         {
         }
 
-        public BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType, Type resultType)
+        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType, Type resultType)
         {
             SyntaxKind = syntaxKind;
             Kind = kind;

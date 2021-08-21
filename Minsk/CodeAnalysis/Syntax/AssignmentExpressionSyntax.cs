@@ -14,11 +14,11 @@ namespace Minsk.CodeAnalysis.Syntax
             Expression = expression;
         }
 
+        public override SyntaxKind Kind => SyntaxKind.AssignmentExpression;
         public SyntaxToken IdentifierToken { get; }
         public SyntaxToken EqualsToken { get; }
         public ExpressionSyntax Expression { get; }
 
-        public override SyntaxKind Kind => SyntaxKind.AssignmentExpression;
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
