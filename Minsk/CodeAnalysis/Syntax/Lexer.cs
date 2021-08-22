@@ -11,7 +11,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
     internal sealed class Lexer
     {
-        private readonly string _text;
+        private readonly SourceText _text;
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
 
         private int _position;
@@ -22,7 +22,7 @@ namespace Minsk.CodeAnalysis.Syntax
         private SyntaxKind _kind;
         private object _value;
 
-        public Lexer(string text)
+        public Lexer(SourceText text)
         {
             Int64 startTicks = Log.CONSTRUCTOR($"Enter: text:{text}", Common.LOG_CATEGORY);
 
@@ -191,7 +191,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             if (text == null)
             {
-                text = _text.Substring(_start, length);
+                text = _text.ToString(_start, length);
             }
 
             //Log.LEXER($"Exit: ERROR: Bad character input: '{Current}' (new BadToken)", Common.LOG_CATEGORY, startTicks);
@@ -217,11 +217,11 @@ namespace Minsk.CodeAnalysis.Syntax
             }
 
             var length = _position - _start;
-            var text = _text.Substring(_start, length);
+            var text = _text.ToString(_start, length);
 
             if (!int.TryParse(text, out var value))
             {
-                _diagnostics.ReportInvalidNumber(new TextSpan(_start, length), _text, typeof(int));
+                _diagnostics.ReportInvalidNumber(new TextSpan(_start, length), text, typeof(int));
             }
 
             _value = value;
@@ -238,7 +238,7 @@ namespace Minsk.CodeAnalysis.Syntax
             }
 
             var length = _position - _start;
-            var text = _text.Substring(_start, length);
+            var text = _text.ToString(_start, length);
             _kind = SyntaxFacts.GetKeyWordKind(text);
         }
     }

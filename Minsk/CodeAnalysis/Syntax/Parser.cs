@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 
+using Minsk.CodeAnalysis.Text;
+
 using VNC;
 
 namespace Minsk.CodeAnalysis.Syntax
@@ -15,17 +17,16 @@ namespace Minsk.CodeAnalysis.Syntax
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly ImmutableArray<SyntaxToken> _tokens;
-
+        private readonly SourceText _text;
         private int _position;
 
-        public Parser(string text)
+        public Parser(SourceText text)
         {
             Int64 startTicks = Log.CONSTRUCTOR($"Enter: text: {text}", Common.LOG_CATEGORY);
 
+            _text = text;
             var tokens = new List<SyntaxToken>();
-
             var lexer = new Lexer(text);
-
             SyntaxToken token;
 
             do
@@ -45,6 +46,7 @@ namespace Minsk.CodeAnalysis.Syntax
             _diagnostics.AddRange(lexer.Diagnostics);
 
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
+
         }
 
         public DiagnosticBag Diagnostics => _diagnostics;
@@ -114,7 +116,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             Log.PARSER($"Exit new SyntaxTree()", Common.LOG_CATEGORY, startTicks);
 
-            return new SyntaxTree(_diagnostics.ToImmutableArray(), expression, endOfFileToken);
+            return new SyntaxTree(_text, _diagnostics.ToImmutableArray(), expression, endOfFileToken);
         }
 
         // NOTE(crhodes)

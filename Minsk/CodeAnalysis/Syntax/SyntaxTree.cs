@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 
+using Minsk.CodeAnalysis.Text;
+
 using VNC;
 
 namespace Minsk.CodeAnalysis.Syntax
@@ -12,10 +14,11 @@ namespace Minsk.CodeAnalysis.Syntax
 
     public sealed class SyntaxTree
     {
-        public SyntaxTree(ImmutableArray<Diagnostic> diagnostics, ExpressionSyntax root, SyntaxToken endOfFileToken)
+        public SyntaxTree(SourceText text, ImmutableArray<Diagnostic> diagnostics, ExpressionSyntax root, SyntaxToken endOfFileToken)
         {
             Int64 startTicks = Log.CONSTRUCTOR($"Enter: diagnostics: {diagnostics} root:{root} endOfFileToken:{endOfFileToken}", Common.LOG_CATEGORY);
 
+            Text = text;
             Diagnostics = diagnostics;
             Root = root;
             EndOfFileToken = endOfFileToken;
@@ -23,11 +26,19 @@ namespace Minsk.CodeAnalysis.Syntax
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
+        public SourceText Text { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }
         public ExpressionSyntax Root { get; }
         public SyntaxToken EndOfFileToken { get; }
 
         public static SyntaxTree Parse(string text)
+        {
+            var sourceText = SourceText.From(text);
+
+            return Parse(sourceText);
+        }
+
+        public static SyntaxTree Parse(SourceText text)
         {
             var parser = new Parser(text);
 
@@ -38,6 +49,12 @@ namespace Minsk.CodeAnalysis.Syntax
         // This allows us to test Lexer without having to publicly expose.
 
         public static IEnumerable<SyntaxToken> ParseTokens(string text)
+        {
+            var sourceText = SourceText.From(text);
+            return ParseTokens(sourceText);
+        }
+
+        public static IEnumerable<SyntaxToken> ParseTokens(SourceText text)
         {
             var lexer = new Lexer(text);
 
