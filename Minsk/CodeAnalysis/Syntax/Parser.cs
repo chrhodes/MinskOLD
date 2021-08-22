@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 using VNC;
 
@@ -13,7 +14,7 @@ namespace Minsk.CodeAnalysis.Syntax
     internal sealed class Parser
     {
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
-        private readonly SyntaxToken[] _tokens;
+        private readonly ImmutableArray<SyntaxToken> _tokens;
 
         private int _position;
 
@@ -39,7 +40,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             } while (token.Kind != SyntaxKind.EndOfFileToken);
 
-            _tokens = tokens.ToArray();
+            _tokens = tokens.ToImmutableArray();
 
             _diagnostics.AddRange(lexer.Diagnostics);
 
@@ -113,7 +114,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             Log.PARSER($"Exit new SyntaxTree()", Common.LOG_CATEGORY, startTicks);
 
-            return new SyntaxTree(_diagnostics, expression, endOfFileToken);
+            return new SyntaxTree(_diagnostics.ToImmutableArray(), expression, endOfFileToken);
         }
 
         // NOTE(crhodes)

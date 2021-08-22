@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 
 using Minsk.CodeAnalysis.Binding;
@@ -30,7 +31,7 @@ namespace Minsk.CodeAnalysis
             var binder = new Binder(variables);
             var boundExpression = binder.BindExpression(SyntaxTree.Root);
 
-            var diagnostics = SyntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
+            var diagnostics = SyntaxTree.Diagnostics.Concat(binder.Diagnostics).ToImmutableArray();
 
             if (diagnostics.Any())
             {
@@ -44,7 +45,7 @@ namespace Minsk.CodeAnalysis
 
             Log.COMPILER($"Exit", Common.LOG_CATEGORY, startTicks);
 
-            return new EvaluationResult(Array.Empty<Diagnostic>(), value);
+            return new EvaluationResult(ImmutableArray<Diagnostic>.Empty, value);
         }
     }
 }
