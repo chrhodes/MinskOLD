@@ -20,9 +20,9 @@ namespace Minsk.CodeAnalysis.Syntax
         public SyntaxToken IdentifierToken { get; }
 
 
-        public override IEnumerable<SyntaxNode> GetChildren()
-        {
-            yield return IdentifierToken;
-        }
+        //public override IEnumerable<SyntaxNode> GetChildren()
+        //{
+        //    yield return IdentifierToken;
+        //}
     }
 }
