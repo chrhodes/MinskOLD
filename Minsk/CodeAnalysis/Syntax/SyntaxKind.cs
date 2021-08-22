@@ -27,8 +27,8 @@ namespace Minsk.CodeAnalysis.Syntax
 
         // Keywords
 
-        FalseKeyWord,
-        TrueKeyWord,
+        FalseKeyword,
+        TrueKeyword,
 
         // Expressions
 

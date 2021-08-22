@@ -34,118 +34,137 @@ namespace Minsk.CodeAnalysis
         {
             Int64 startTicks = Log.EVALUATOR($"Enter node: {node}", Common.LOG_CATEGORY);
 
-            if (node is BoundLiteralExpression n)
+            switch (node.Kind)
             {
-                Log.EVALUATOR($"Exit n.Value:{n.Value}", Common.LOG_CATEGORY, startTicks);
+                case BoundNodeKind.LiteralExpression:
+                    {
+                        var value = EvaluateLiteralExpression((BoundLiteralExpression)node);
 
-                return n.Value;
+                        Log.EVALUATOR($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+
+                        return value;
+                    }
+
+                case BoundNodeKind.VariableExpression:
+                    {
+                        var value = EvaluateVariableExpression((BoundVariableExpression)node);
+
+                        Log.EVALUATOR($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+
+                        return value;
+                    }
+
+                case BoundNodeKind.AssignmentExpression:
+                    {
+                        var value = EvaluateAssignmentExpression((BoundAssignmentExpression)node);
+
+                        Log.EVALUATOR($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+
+                        return value;
+                    }
+
+                case BoundNodeKind.UnaryExpression:
+                    {
+                        var value = EvaluateUnaryExpression((BoundUnaryExpression)node);
+
+                        Log.EVALUATOR($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+
+                        return value;
+                    }
+
+                case BoundNodeKind.BinaryExpression:
+                    {
+                        var value = EvaluateBinaryExpression((BoundBinaryExpression)node);
+
+                        Log.EVALUATOR($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+
+                        return value;
+                    }
+
+
+                //if (node is BoundParenthesizedExpression p)
+                //{
+                //    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                //    return EvaluateExpression(p.Expression);
+                //}
+
+                default:
+                    throw new Exception($"Unexpected node {node.Kind}");
             }
+        }
 
-            if (node is BoundVariableExpression v)
+        private static object EvaluateLiteralExpression(BoundLiteralExpression n)
+        {
+            return n.Value;
+        }
+
+        private object EvaluateVariableExpression(BoundVariableExpression v)
+        {
+            return _variables[v.Variable];
+        }
+
+        private object EvaluateAssignmentExpression(BoundAssignmentExpression a)
+        {
+            var value = EvaluateExpression(a.Expression);
+            _variables[a.Variable] = value;
+            return value;
+        }
+
+        private object EvaluateUnaryExpression(BoundUnaryExpression u)
+        {
+            var operand = EvaluateExpression(u.Operand);
+
+            switch (u.Op.Kind)
             {
-                var value = _variables[v.Variable];
+                case BoundUnaryOperatorKind.Identity:
+                    return (int)operand;
 
-                Log.EVALUATOR($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+                case BoundUnaryOperatorKind.Negation:
+                    return -(int)operand;
 
-                return value;
+                case BoundUnaryOperatorKind.LogicalNegation:
+                    return !(Boolean)operand;
+
+                default:
+                    throw new Exception($"Unexpected Unary Operator {u.Op}");
             }
+        }
 
-            if (node is BoundAssignmentExpression a)
+        private object EvaluateBinaryExpression(BoundBinaryExpression b)
+        {
+            var left = EvaluateExpression(b.Left);
+            var right = EvaluateExpression(b.Right);
+
+            switch (b.Op.Kind)
             {
-                var value = EvaluateExpression(a.Expression);
-                _variables[a.Variable] = value;
+                case BoundBinaryOperatorKind.Addition:
+                    return (int)left + (int)right;
 
-                Log.EVALUATOR($"Exit value:{value}", Common.LOG_CATEGORY, startTicks);
+                case BoundBinaryOperatorKind.Subtraction:
+                    return (int)left - (int)right;
 
-                return value;
+                case BoundBinaryOperatorKind.Multiplication:
+                    return (int)left * (int)right;
+
+                case BoundBinaryOperatorKind.Division:
+                    return (int)left / (int)right;
+
+                case BoundBinaryOperatorKind.LogicalAnd:
+                    return (Boolean)left && (Boolean)right;
+
+                case BoundBinaryOperatorKind.LogicalOr:
+                    return (Boolean)left || (Boolean)right;
+
+                case BoundBinaryOperatorKind.Equals:
+                    return Equals(left, right);
+
+                case BoundBinaryOperatorKind.NotEquals:
+                    return !Equals(left, right);
+
+                default:
+                    throw new Exception($"Unexpected Binary Operator {b.Op}");
             }
-
-            if (node is BoundUnaryExpression u)
-            {
-                var operand = EvaluateExpression(u.Operand);
-
-                switch (u.Op.Kind)
-                {
-                    case BoundUnaryOperatorKind.Identity:
-                        Log.EVALUATOR($"Exit operand:{operand}", Common.LOG_CATEGORY, startTicks);
-
-                        return (int)operand;
-
-                    case BoundUnaryOperatorKind.Negation:
-                        Log.EVALUATOR($"Exit operand:{operand}", Common.LOG_CATEGORY, startTicks);
-
-                        return -(int)operand;
-
-                    case BoundUnaryOperatorKind.LogicalNegation:
-                        Log.EVALUATOR($"Exit operand:{operand}", Common.LOG_CATEGORY, startTicks);
-
-                        return !(Boolean)operand;
-
-                    default:
-                        throw new Exception($"Unexpected Unary Operator {u.Op}");
-                }
-            }
-
-            if (node is BoundBinaryExpression b)
-            {
-                var left = EvaluateExpression(b.Left);
-                var right = EvaluateExpression(b.Right);
-
-                switch (b.Op.Kind)
-                {
-                    case BoundBinaryOperatorKind.Addition:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return (int)left + (int)right;
-
-                    case BoundBinaryOperatorKind.Subtraction:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return (int)left - (int)right;
-
-                    case BoundBinaryOperatorKind.Multiplication:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return (int)left * (int)right;
-
-                    case BoundBinaryOperatorKind.Division:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return (int)left / (int)right;
-
-                    case BoundBinaryOperatorKind.LogicalAnd:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return (Boolean)left && (Boolean)right;
-
-                    case BoundBinaryOperatorKind.LogicalOr:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return (Boolean)left || (Boolean)right;
-
-                    case BoundBinaryOperatorKind.Equals:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return Equals(left, right);
-
-                    case BoundBinaryOperatorKind.NotEquals:
-                        Log.EVALUATOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
-                        return !Equals(left, right);
-
-                    default:
-                        throw new Exception($"Unexpected Binary Operator {b.Op}");
-                }
-            }
-
-            //if (node is BoundParenthesizedExpression p)
-            //{
-            //    Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
-
-            //    return EvaluateExpression(p.Expression);
-            //}
-
-            throw new Exception($"Unexpected node {node.Kind}");
         }
     }
 }

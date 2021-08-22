@@ -55,10 +55,10 @@ namespace Minsk.CodeAnalysis.Syntax
             switch (text)
             {
                 case "true":
-                    return SyntaxKind.TrueKeyWord;
+                    return SyntaxKind.TrueKeyword;
 
                 case "false":
-                    return SyntaxKind.FalseKeyWord;
+                    return SyntaxKind.FalseKeyword;
 
                 default:
                     return SyntaxKind.IdentifierToken;
@@ -131,10 +131,10 @@ namespace Minsk.CodeAnalysis.Syntax
                case SyntaxKind.CloseParenthesisToken:
                     return ")";
 
-                case SyntaxKind.FalseKeyWord:
+                case SyntaxKind.FalseKeyword:
                     return "false";
 
-                case SyntaxKind.TrueKeyWord:
+                case SyntaxKind.TrueKeyword:
                     return "true";
 
                 default:

@@ -204,10 +204,10 @@ namespace Minsk.CodeAnalysis.Syntax
 
                     return new ParenthesizedExpressionSyntax(left, expression, right);
 
-                case SyntaxKind.TrueKeyWord:
-                case SyntaxKind.FalseKeyWord:
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
                     var keywordToken = NextToken();
-                    var value = keywordToken.Kind == SyntaxKind.TrueKeyWord;
+                    var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
 
                     Log.PARSER($"Exit (LiteralExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
 

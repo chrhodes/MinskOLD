@@ -44,7 +44,9 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
         [Theory]
         [MemberData(nameof(GetTokenPairsData))]
-        public void Lexer_Lexes_TokenPairs(SyntaxKind t1Kind, string t1Text, SyntaxKind t2Kind, string t2Text)
+        public void Lexer_Lexes_TokenPairs(
+            SyntaxKind t1Kind, string t1Text,
+            SyntaxKind t2Kind, string t2Text)
         {
             var text = t1Text + t2Text;
 
@@ -115,14 +117,13 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
             var dyanmicTokens = new[]
             {
+                (SyntaxKind.NumberToken, "1"),
+                (SyntaxKind.NumberToken, "123"),
 
                 (SyntaxKind.IdentifierToken, "a"),
                 (SyntaxKind.IdentifierToken, "abc"),
                 //(SyntaxKind.IdentifierToken, "1A2"),
                 //(SyntaxKind.IdentifierToken, "A12"),
-
-                (SyntaxKind.NumberToken, "1"),
-                (SyntaxKind.NumberToken, "123"),
             };
 
             return fixedTokens.Concat(dyanmicTokens);
@@ -148,8 +149,8 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             // HACK(crhodes)
             // Massive hack for now :)
 
-            var t1IsKeyword = t1Kind.ToString().EndsWith("KeyWord");
-            var t2IsKeyword = t2Kind.ToString().EndsWith("KeyWord");
+            var t1IsKeyword = t1Kind.ToString().EndsWith("Keyword");
+            var t2IsKeyword = t2Kind.ToString().EndsWith("Keyword");
 
             if (t1Kind == SyntaxKind.IdentifierToken
                 && t2Kind == SyntaxKind.IdentifierToken)
