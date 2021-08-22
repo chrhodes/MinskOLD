@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 
-namespace Minsk.CodeAnalysis
+namespace Minsk.CodeAnalysis.Text
 {
     public struct TextSpan
     {
