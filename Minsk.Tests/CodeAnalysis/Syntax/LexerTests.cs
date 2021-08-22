@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
@@ -10,15 +11,31 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 {
     public class LexerTests
     {
+
+        [Fact]
+        public void Lexer_Tests_AllTokens()
+        {
+            var tokenKinds = Enum.GetValues(typeof(SyntaxKind))
+                .Cast<SyntaxKind>()
+                .Where(k => k.ToString().EndsWith("Keyword")
+                    || k.ToString().EndsWith("Token"));
+
+            var testedTokenKinds = GetTokens().Concat(GetSeparators()).Select(t => t.kind);
+
+            var untestedTokenKinds = new SortedSet<SyntaxKind>(tokenKinds);
+            untestedTokenKinds.Remove(SyntaxKind.BadToken);
+            untestedTokenKinds.Remove(SyntaxKind.EndOfFileToken);
+
+            untestedTokenKinds.ExceptWith(testedTokenKinds);
+
+            Assert.Empty(untestedTokenKinds);
+        }
+
         [Theory]
         [MemberData(nameof(GetTokensData))]
         public void Lexer_Lexes_Token(SyntaxKind kind, string text)
         {
             var tokens = SyntaxTree.ParseTokens(text);
-
-            // NOTE(crhodes)
-            // Where the heck do we put the app.config stuff so Logging works in code under test.
-            //string path = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None).FilePath;
 
             var token = Assert.Single(tokens);
             Assert.Equal(kind, token.Kind);
@@ -91,49 +108,24 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
         private static IEnumerable<(SyntaxKind kind, string text)> GetTokens()
         {
-            return new[]
+            var fixedTokens = Enum.GetValues(typeof(SyntaxKind))
+                .Cast<SyntaxKind>()
+                .Select(k => (kind: k, text: SyntaxFacts.GetText(k)))
+                .Where(t => t.text != null);
+
+            var dyanmicTokens = new[]
             {
-                // Tokens
-
-                (SyntaxKind.BangToken, "!"),
-                (SyntaxKind.EqualsToken, "="),
-                (SyntaxKind.AmpersandAmpersandToken, "&&"),
-                (SyntaxKind.PipePipeToken, "||"),
-                (SyntaxKind.EqualsEqualsToken, "=="),
-                (SyntaxKind.BangEqualsToken, "!="),
-
-                // Operators
-
-                (SyntaxKind.PlusToken, "+"),
-                (SyntaxKind.MinusToken, "-"),
-                (SyntaxKind.StarToken, "*"),
-                (SyntaxKind.SlashToken, "/"),
-                (SyntaxKind.OpenParenthesisToken, "("),
-                (SyntaxKind.CloseParenthesisToken, ")"),
-
 
                 (SyntaxKind.IdentifierToken, "a"),
                 (SyntaxKind.IdentifierToken, "abc"),
                 //(SyntaxKind.IdentifierToken, "1A2"),
                 //(SyntaxKind.IdentifierToken, "A12"),
 
-                // NOTE(crhodes)
-                // Will test WhiteSpace differently
-
-                //(SyntaxKind.WhiteSpaceToken, " "),
-                //(SyntaxKind.WhiteSpaceToken, "  "),
-                //(SyntaxKind.WhiteSpaceToken, "\r"),
-                //(SyntaxKind.WhiteSpaceToken, "\r\n"),
-                //(SyntaxKind.WhiteSpaceToken, "\n"),
-
                 (SyntaxKind.NumberToken, "1"),
                 (SyntaxKind.NumberToken, "123"),
-
-                // Keywords
-
-                (SyntaxKind.FalseKeyWord, "false"),
-                (SyntaxKind.TrueKeyWord, "true")
             };
+
+            return fixedTokens.Concat(dyanmicTokens);
         }
 
         private static IEnumerable<(SyntaxKind kind, string text)> GetSeparators()
