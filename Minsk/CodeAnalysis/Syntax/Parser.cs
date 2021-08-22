@@ -6,15 +6,14 @@ using VNC;
 namespace Minsk.CodeAnalysis.Syntax
 {
     //NOTE(crhodes)
-    // Parser assembles the tokens into sentences
-    // Parser produces Syntax Trees (sentences)
+    // Parser assembles the words into sentences
+    // by producing Syntax Trees (sentences)
     // from the Syntax Tokens (words)
 
     internal sealed class Parser
     {
+        private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         private readonly SyntaxToken[] _tokens;
-
-        private DiagnosticBag _diagnostics = new DiagnosticBag();
 
         private int _position;
 
@@ -191,42 +190,55 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private ExpressionSyntax ParsePrimaryExpression()
         {
-            Int64 startTicks = Log.PARSER($"Enter", Common.LOG_CATEGORY);
+            //Int64 startTicks = Log.PARSER($"Enter", Common.LOG_CATEGORY);
 
             switch (Current.Kind)
             {
                 case SyntaxKind.OpenParenthesisToken:
-                    var left = NextToken();
-                    var expression = ParseExpression();
-                    var right = MatchToken(SyntaxKind.CloseParenthesisToken);
-
-                    Log.PARSER($"Exit (ParenthesizedExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
-
-                    return new ParenthesizedExpressionSyntax(left, expression, right);
+                    return ParseParenthesizedExpression();
 
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
-                    var keywordToken = NextToken();
-                    var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
+                    return ParseBooleanLiteral();
 
-                    Log.PARSER($"Exit (LiteralExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
-
-                    return new LiteralExpressionSyntax(keywordToken, value);
+                case SyntaxKind.NumberToken:
+                    return ParseNumberLiteral();
 
                 case SyntaxKind.IdentifierToken:
-                    var identifierToken = NextToken();
-
-                    Log.PARSER($"Exit (NameExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
-
-                    return new NameExpressionSyntax(identifierToken);
-
                 default:
-                    var numberToken = MatchToken(SyntaxKind.NumberToken);
-
-                    Log.PARSER($"Exit (LiteralExpressionSyntax)", Common.LOG_CATEGORY, startTicks);
-
-                    return new LiteralExpressionSyntax(numberToken);
+                    return ParseNameExpression();
             }
+        }
+
+        private ExpressionSyntax ParseParenthesizedExpression()
+        {
+            var left = MatchToken(SyntaxKind.OpenParenthesisToken);
+            var expression = ParseExpression();
+            var right = MatchToken(SyntaxKind.CloseParenthesisToken);
+
+            return new ParenthesizedExpressionSyntax(left, expression, right);
+        }
+
+        private ExpressionSyntax ParseBooleanLiteral()
+        {
+            var isTrue = Current.Kind == SyntaxKind.TrueKeyword;
+            var keywordToken = isTrue ? MatchToken(SyntaxKind.TrueKeyword) : MatchToken(SyntaxKind.FalseKeyword);
+
+            return new LiteralExpressionSyntax(keywordToken, isTrue);
+        }
+
+        private ExpressionSyntax ParseNumberLiteral()
+        {
+            var numberToken = MatchToken(SyntaxKind.NumberToken);
+
+            return new LiteralExpressionSyntax(numberToken);
+        }
+
+        private ExpressionSyntax ParseNameExpression()
+        {
+            var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+
+            return new NameExpressionSyntax(identifierToken);
         }
     }
 }
