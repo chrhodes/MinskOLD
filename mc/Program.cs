@@ -58,7 +58,8 @@ namespace Minsk
                 {
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
 
-                    PrettyPrint2(syntaxTree.Root);
+                    syntaxTree.Root.WriteTo(Console.Out);
+                    //PrettyPrint2(syntaxTree.Root);
 
                     Console.ResetColor();
                 }
@@ -76,7 +77,6 @@ namespace Minsk
                         Console.WriteLine();
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(diagnostic);
-
 
                         var prefix = line.Substring(0, diagnostic.Span.Start);
                         var error = line.Substring(diagnostic.Span.Start, diagnostic.Span.Length);
@@ -102,56 +102,6 @@ namespace Minsk
             }
         }
 
-        static void PrettyPrint1(SyntaxNode node, string indent = "")
-        {
-            Console.Write(indent);
-            Console.Write(node.Kind);
 
-            if (node is SyntaxToken t && t.Value != null)
-            {
-                Console.Write(" ");
-                Console.Write(t.Value);
-            }
-
-            Console.WriteLine();
-
-            indent += "   ";
-
-            foreach (var child in node.GetChildren())
-            {
-                PrettyPrint1(child, indent);
-            }
-        }
-
-        static void PrettyPrint2(SyntaxNode node, string indent = "", bool isLast = true)
-        {
-            // Unix https://en.wikipedia.org/wiki/Tree_(command)
-            // └──
-            // ├──
-            // │
-
-            var marker = isLast ? "└──" : "├──";
-
-            Console.Write(indent);
-            Console.Write(marker);
-            Console.Write(node.Kind);
-
-            if (node is SyntaxToken t && t.Value != null)
-            {
-                Console.Write(" ");
-                Console.Write(t.Value);
-            }
-
-            Console.WriteLine();
-
-            indent += isLast ? "   " : "│  ";
-
-            var lastChild = node.GetChildren().LastOrDefault();
-
-            foreach (var child in node.GetChildren())
-            {
-                PrettyPrint2(child, indent, child == lastChild);
-            }
-        }
     }
 }

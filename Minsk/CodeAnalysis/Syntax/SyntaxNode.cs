@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -59,6 +60,73 @@ namespace Minsk.CodeAnalysis.Syntax
                         yield return child;
                     }
                 }
+            }
+        }
+
+        public void WriteTo(TextWriter writer)
+        {
+            PrettyPrint2(writer, this);
+        }
+
+        private static void PrettyPrint1(TextWriter writer, SyntaxNode node, string indent = "")
+        {
+            writer.Write(indent);
+            writer.Write(node.Kind);
+
+            if (node is SyntaxToken t && t.Value != null)
+            {
+                writer.Write(" ");
+                writer.Write(t.Value);
+            }
+
+            writer.WriteLine();
+
+            indent += "   ";
+
+            foreach (var child in node.GetChildren())
+            {
+                PrettyPrint1(writer, child, indent);
+            }
+        }
+
+        private static void PrettyPrint2(TextWriter writer, SyntaxNode node, string indent = "", bool isLast = true)
+        {
+            // Unix https://en.wikipedia.org/wiki/Tree_(command)
+            // └──
+            // ├──
+            // │
+
+            var marker = isLast ? "└──" : "├──";
+
+            writer.Write(indent);
+            writer.Write(marker);
+            writer.Write(node.Kind);
+
+            if (node is SyntaxToken t && t.Value != null)
+            {
+                writer.Write(" ");
+                writer.Write(t.Value);
+            }
+
+            writer.WriteLine();
+
+            indent += isLast ? "   " : "│  ";
+
+            var lastChild = node.GetChildren().LastOrDefault();
+
+            foreach (var child in node.GetChildren())
+            {
+                PrettyPrint2(writer, child, indent, child == lastChild);
+            }
+        }
+
+        public override string ToString()
+        {
+            using (var writer = new StringWriter())
+            {
+                WriteTo(writer);
+
+                return writer.ToString();
             }
         }
     }
