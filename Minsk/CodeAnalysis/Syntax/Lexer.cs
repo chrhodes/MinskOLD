@@ -1,5 +1,7 @@
 using System;
 
+using Minsk.CodeAnalysis.Text;
+
 using VNC;
 
 namespace Minsk.CodeAnalysis.Syntax
