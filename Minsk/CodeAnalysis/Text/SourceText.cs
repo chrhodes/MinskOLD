@@ -9,8 +9,8 @@ namespace Minsk.CodeAnalysis.Text
 
         private SourceText(string text)
         {
-            Lines = ParseLines(this, text);
             _text = text;
+            Lines = ParseLines(this, text);
         }
 
         public ImmutableArray<TextLine> Lines { get; }
@@ -77,7 +77,7 @@ namespace Minsk.CodeAnalysis.Text
                 }
             }
 
-            if (position > lineStart)
+            if (position >= lineStart)
             {
                 AddLine(result, sourceText, position, lineStart, 0);
             }
