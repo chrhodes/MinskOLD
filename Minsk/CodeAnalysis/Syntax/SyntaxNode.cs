@@ -118,6 +118,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             writer.Write(node.Kind);
 
+
             if (node is SyntaxToken t && t.Value != null)
             {
                 writer.Write(" ");
