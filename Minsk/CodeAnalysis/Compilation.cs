@@ -29,7 +29,7 @@ namespace Minsk.CodeAnalysis
             Int64 startTicks = Log.COMPILER($"Enter", Common.LOG_CATEGORY);
 
             var binder = new Binder(variables);
-            var boundExpression = binder.BindExpression(SyntaxTree.Root);
+            var boundExpression = binder.BindExpression(SyntaxTree.Root.Expression);
 
             var diagnostics = SyntaxTree.Diagnostics.Concat(binder.Diagnostics).ToImmutableArray();
 

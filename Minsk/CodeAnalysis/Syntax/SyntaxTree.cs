@@ -14,22 +14,25 @@ namespace Minsk.CodeAnalysis.Syntax
 
     public sealed class SyntaxTree
     {
-        public SyntaxTree(SourceText text, ImmutableArray<Diagnostic> diagnostics, ExpressionSyntax root, SyntaxToken endOfFileToken)
+        private SyntaxTree(SourceText text)
         {
-            Int64 startTicks = Log.CONSTRUCTOR($"Enter: diagnostics: {diagnostics} root:{root} endOfFileToken:{endOfFileToken}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.CONSTRUCTOR($"Enter: text: ({text})", Common.LOG_CATEGORY);
+
+            var parser = new Parser(text);
+
+            var root = parser.ParseCompilationUnit();
+            var diagnostics = parser.Diagnostics.ToImmutableArray();
 
             Text = text;
             Diagnostics = diagnostics;
             Root = root;
-            EndOfFileToken = endOfFileToken;
 
             Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
         }
 
         public SourceText Text { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }
-        public ExpressionSyntax Root { get; }
-        public SyntaxToken EndOfFileToken { get; }
+        public CompilationUnitSyntax Root { get; }
 
         public static SyntaxTree Parse(string text)
         {
@@ -40,9 +43,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public static SyntaxTree Parse(SourceText text)
         {
-            var parser = new Parser(text);
-
-            return parser.Parse();
+            return new SyntaxTree(text);
         }
 
         // NOTE(crhodes)

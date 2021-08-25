@@ -106,7 +106,7 @@ namespace Minsk.CodeAnalysis.Syntax
             return new SyntaxToken(kind, Current.Position, null, null);
         }
 
-        public SyntaxTree Parse()
+        public CompilationUnitSyntax ParseCompilationUnit()
         {
             Int64 startTicks = Log.PARSER($"Enter", Common.LOG_CATEGORY);
 
@@ -115,7 +115,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             Log.PARSER($"Exit new SyntaxTree()", Common.LOG_CATEGORY, startTicks);
 
-            return new SyntaxTree(_text, _diagnostics.ToImmutableArray(), expression, endOfFileToken);
+            return new CompilationUnitSyntax(expression, endOfFileToken);
         }
 
         // NOTE(crhodes)
