@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Minsk.CodeAnalysis.Syntax.AssignmentExpressionSyntax" Collapsed="true">
+    <Position X="0.5" Y="0.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAAAABAAAAAAAAAQAAAAAAAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\AssignmentExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.BinaryExpressionSyntax" Collapsed="true">
+    <Position X="3.25" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAACACAAAAAgAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\BinaryExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.ExpressionSyntax">
+    <Position X="8" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\ExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.Lexer" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABgAAYAAAAAEgIIAAAGAAAAAAABAAAAIAAAAhAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\Lexer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.LiteralExpressionSyntax" Collapsed="true">
+    <Position X="5.5" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAEAAAAAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\LiteralExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.NameExpressionSyntax" Collapsed="true">
+    <Position X="7.75" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\NameExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.ParenthesizedExpressionSyntax" Collapsed="true">
+    <Position X="10.25" Y="0.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAIQAQAAAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\ParenthesizedExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.Parser" Collapsed="true">
+    <Position X="2.5" Y="6.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAooCAAAIAAECAIAAACAAAAAAAQAIAAIEAAAgCAAAAg=</HashCode>
+      <FileName>CodeAnalysis\Syntax\Parser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxFacts" Collapsed="true">
+    <Position X="3" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAAAAAIAAgAAAAAAAAAAAgAAACQAAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxFacts.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxNode" Collapsed="true">
+    <Position X="10.25" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAQAAAABAAAAEAAAAAAAAAAAAQAAgAAAAAAIAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxToken" Collapsed="true">
+    <Position X="11.75" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAgAAAAAAAAAAAAAAAAAAAgCAIAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxToken.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.SyntaxTree" Collapsed="true">
+    <Position X="1" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAiIAEAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\SyntaxTree.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Minsk.CodeAnalysis.Syntax.UnaryExpressionSyntax" Collapsed="true">
+    <Position X="13" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAEAgAA=</HashCode>
+      <FileName>CodeAnalysis\Syntax\UnaryExpressionSyntax.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

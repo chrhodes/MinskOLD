@@ -24,7 +24,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public Lexer(SourceText text)
         {
-            Int64 startTicks = Log.CONSTRUCTOR($"Enter: text:{text}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.CONSTRUCTOR($"Enter: text: ({text})", Common.LOG_CATEGORY);
 
             _text = text;
 
@@ -38,19 +38,19 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private char Peek(int offset)
         {
-            Int64 startTicks = Log.LEXER($"Enter offset: {offset}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.LEXER($"Enter offset: ({offset})", Common.LOG_CATEGORY);
 
             var index = _position + offset;
 
             if (index >= _text.Length)
             {
-                Log.LEXER($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.LEXER($"Exit: (\0)", Common.LOG_CATEGORY, startTicks);
 
                 return '\0';
             }
             else
             {
-                Log.LEXER($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.LEXER($"Exit: ({_text[index]})", Common.LOG_CATEGORY, startTicks);
 
                 return _text[index];
             }
@@ -194,7 +194,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 text = _text.ToString(_start, length);
             }
 
-            //Log.LEXER($"Exit: ERROR: Bad character input: '{Current}' (new BadToken)", Common.LOG_CATEGORY, startTicks);
+            Log.PARSER($"Exit: new SyntaxToken()", Common.LOG_CATEGORY, startTicks);
 
             return new SyntaxToken(_kind, _start, text, _value);
         }

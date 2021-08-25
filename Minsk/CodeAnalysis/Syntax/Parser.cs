@@ -22,7 +22,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public Parser(SourceText text)
         {
-            Int64 startTicks = Log.CONSTRUCTOR($"Enter: text: {text}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.CONSTRUCTOR($"Enter: text: ({text})", Common.LOG_CATEGORY);
 
             _text = text;
             var tokens = new List<SyntaxToken>();
@@ -45,8 +45,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             _diagnostics.AddRange(lexer.Diagnostics);
 
-            Log.CONSTRUCTOR($"Exit", Common.LOG_CATEGORY, startTicks);
-
+            Log.CONSTRUCTOR("Exit", Common.LOG_CATEGORY, startTicks);
         }
 
         public DiagnosticBag Diagnostics => _diagnostics;
@@ -56,18 +55,18 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private SyntaxToken Peek(int offset)
         {
-            Int64 startTicks = Log.PARSER($"Enter offset: {offset}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.PARSER($"Enter offset: ({offset})", Common.LOG_CATEGORY);
 
             var index = _position + offset;
 
             if (index >= _tokens.Length)
             {
-                Log.PARSER($"Exit {_tokens[_tokens.Length - 1].Kind}", Common.LOG_CATEGORY, startTicks);
+                Log.PARSER($"Exit: ({_tokens[_tokens.Length - 1].Kind})", Common.LOG_CATEGORY, startTicks);
 
                 return _tokens[_tokens.Length - 1];
             }
 
-            Log.PARSER($"Exit {_tokens[index].Kind}", Common.LOG_CATEGORY, startTicks);
+            Log.PARSER($"Exit: ({_tokens[index].Kind})", Common.LOG_CATEGORY, startTicks);
 
             return _tokens[index];
         }
@@ -81,14 +80,14 @@ namespace Minsk.CodeAnalysis.Syntax
             var current = Current;
             _position++;
 
-            Log.PARSER($"Exit {current.Kind}", Common.LOG_CATEGORY, startTicks);
+            Log.PARSER($"Exit: ({current.Kind})", Common.LOG_CATEGORY, startTicks);
 
             return current;
         }
 
         private SyntaxToken MatchToken(SyntaxKind kind)
         {
-            Int64 startTicks = Log.PARSER($"Enter kind: {kind}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.PARSER($"Enter kind: ({kind})", Common.LOG_CATEGORY);
 
             if (Current.Kind == kind)
             {
@@ -125,6 +124,7 @@ namespace Minsk.CodeAnalysis.Syntax
         private ExpressionSyntax ParseExpression()
         {
             Int64 startTicks = Log.PARSER($"Enter", Common.LOG_CATEGORY);
+
             Log.PARSER($"Exit return ParseAssignmentExpression()", Common.LOG_CATEGORY, startTicks);
 
             return ParseAssignmentExpression();
@@ -153,7 +153,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0)
         {
-            Int64 startTicks = Log.PARSER($"Enter parentPrecedence: {parentPrecedence}", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.PARSER($"Enter parentPrecedence: ({parentPrecedence})", Common.LOG_CATEGORY);
 
             ExpressionSyntax left;
 
