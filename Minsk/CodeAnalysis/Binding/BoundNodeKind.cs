@@ -2,6 +2,11 @@ namespace Minsk.CodeAnalysis.Binding
 {
     internal enum BoundNodeKind
     {
+        // statements
+
+        BlockStatement,
+        ExpressionStatement,
+
         // Expressions
 
         LiteralExpression,
@@ -9,5 +14,6 @@ namespace Minsk.CodeAnalysis.Binding
         AssignmentExpression,
         UnaryExpression,
         BinaryExpression,
+
     }
 }

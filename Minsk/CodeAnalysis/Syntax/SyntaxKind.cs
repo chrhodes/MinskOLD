@@ -22,8 +22,11 @@ namespace Minsk.CodeAnalysis.Syntax
         MinusToken,
         StarToken,
         SlashToken,
+
         OpenParenthesisToken,
         CloseParenthesisToken,
+        OpenBraceToken,
+        CloseBraceToken,
 
         // Keywords
 
@@ -34,6 +37,11 @@ namespace Minsk.CodeAnalysis.Syntax
 
         CompilationUnit,
 
+        // Statements
+
+        BlockStatement,
+        ExpressionStatement,
+
         // Expressions
 
         LiteralExpression,
@@ -41,7 +49,7 @@ namespace Minsk.CodeAnalysis.Syntax
         UnaryExpression,
         BinaryExpression,
         ParenthesizedExpression,
-        AssignmentExpression
+        AssignmentExpression,
 
     }
 }
