@@ -49,6 +49,14 @@ namespace Minsk.CodeAnalysis
                         break;
                     }
 
+                case BoundNodeKind.VariableDeclaration:
+                    {
+                        Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
+
+                        EvaluateVarialbeDeclaration((BoundVariableDeclaration)node);
+                        break;
+                    }
+
                 case BoundNodeKind.ExpressionStatement:
                     {
                         Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
@@ -68,6 +76,13 @@ namespace Minsk.CodeAnalysis
             {
                 EvaluateStatement(statement);
             }
+        }
+
+        private void EvaluateVarialbeDeclaration(BoundVariableDeclaration node)
+        {
+            var value = EvaluateExpression(node.Initializer);
+            _variables[node.Variable] = value;
+            _lastValue = value;
         }
 
         private void EvaluateExpressionStatement(BoundExpressionStatement node)

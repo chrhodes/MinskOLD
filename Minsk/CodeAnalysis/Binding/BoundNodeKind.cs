@@ -2,18 +2,19 @@ namespace Minsk.CodeAnalysis.Binding
 {
     internal enum BoundNodeKind
     {
-        // statements
+        // Statements
 
         BlockStatement,
+        VariableDeclaration,
         ExpressionStatement,
 
         // Expressions
 
+        BinaryExpression,
         LiteralExpression,
         VariableExpression,
         AssignmentExpression,
         UnaryExpression,
-        BinaryExpression,
 
     }
 }

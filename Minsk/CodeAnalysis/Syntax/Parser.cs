@@ -121,12 +121,18 @@ namespace Minsk.CodeAnalysis.Syntax
 
         private StatementSyntax ParseStatement()
         {
-            if (Current.Kind == SyntaxKind.OpenBraceToken)
+            switch (Current.Kind)
             {
-                return ParseBlockStatement();
-            }
+                case SyntaxKind.OpenBraceToken:
+                    return ParseBlockStatement();
 
-            return ParseExpressionStatement();
+                case SyntaxKind.LetKeyword:
+                case SyntaxKind.VarKeyword:
+                    return ParseVariableDeclaration();
+
+                default:
+                    return ParseExpressionStatement();
+            }
         }
 
         private BlockStatementSyntax ParseBlockStatement()
@@ -144,6 +150,18 @@ namespace Minsk.CodeAnalysis.Syntax
             var closeBraceToken = MatchToken(SyntaxKind.CloseBraceToken);
 
             return new BlockStatementSyntax(openBraceToken, statements.ToImmutable(), closeBraceToken);
+        }
+
+        private StatementSyntax ParseVariableDeclaration()
+        {
+            var expected = Current.Kind == SyntaxKind.LetKeyword ? SyntaxKind.LetKeyword : SyntaxKind.VarKeyword;
+
+            var keyword = MatchToken(expected);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var equals = MatchToken(SyntaxKind.EqualsToken);
+            var initializer = ParseExpression();
+
+            return new VariableDeclarationStatement(keyword, identifier, equals, initializer);
         }
 
         private ExpressionStatementSyntax ParseExpressionStatement()
