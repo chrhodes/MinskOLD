@@ -28,7 +28,7 @@ namespace Minsk.Tests.CodeAnalysis
         {
             text = Unindent(text);
 
-            //var text @"
+            //var text = @"
             //    {
             //        var x = 10
             //        let x = 2
@@ -39,21 +39,57 @@ namespace Minsk.Tests.CodeAnalysis
             var spanBuilder = ImmutableArray.CreateBuilder<TextSpan>();
             var startStack = new Stack<int>();
 
+            var position = 0;
+
             foreach (var c in text)
             {
-                
+                if (c == '[')
+                {
+                    startStack.Push(position);
+                }
+                else if (c == ']')
+                {
+                    if (startStack.Count == 0)
+                    {
+                        throw new ArgumentException("Too many ']' in text", nameof(text));
+                    }
+
+                    var start = startStack.Pop();
+                    var end = position;
+                    var span = TextSpan.FromBounds(start, end);
+
+                    spanBuilder.Add(span);
+                }
+                else
+                {
+                    position++;
+                    textBuilder.Append(c);
+                }
+            }
+
+            if (startStack.Count != 0)
+            {
+                throw new ArgumentException("Too few ']' in text", nameof(text));
             }
 
             return new AnnotatedText(textBuilder.ToString(), spanBuilder.ToImmutable());
         }
 
+
         private static string Unindent(string text)
+        {
+            var lines = UnindentLines(text);
+
+            return string.Join(Environment.NewLine, lines);
+        }
+
+        public static string[] UnindentLines(string text)
         {
             var lines = new List<string>();
 
             using (var reader = new StringReader(text))
             {
-                string line;
+                string? line;
 
                 while ((line = reader.ReadLine()) != null)
                 {
@@ -73,7 +109,7 @@ namespace Minsk.Tests.CodeAnalysis
                     continue;
                 }
 
-                var indentation = line.TrimStart().Length;
+                var indentation = line.Length - line.TrimStart().Length;
                 minIndentation = Math.Min(minIndentation, indentation);
             }
 
@@ -88,12 +124,18 @@ namespace Minsk.Tests.CodeAnalysis
             }
 
             while (lines.Count > 0
-                && lines[0].Length ==0)
+                && lines[0].Length == 0)
             {
                 lines.RemoveAt(0);
             }
 
-            return string.Join(Environment.NewLine, lines);
+            while (lines.Count > 0
+                && lines[lines.Count - 1].Length == 0)
+            {
+                lines.RemoveAt(lines.Count - 1);
+            }
+
+            return lines.ToArray();
         }
     }
 }

@@ -21,5 +21,7 @@ namespace Minsk.CodeAnalysis.Text
 
             return new TextSpan(start, length);
         }
+
+        public override string ToString() => $"{Start}..{End}";
     }
 }
