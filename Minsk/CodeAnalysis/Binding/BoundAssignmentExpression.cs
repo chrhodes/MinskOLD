@@ -14,6 +14,5 @@ namespace Minsk.CodeAnalysis.Binding
         public override Type Type => Expression.Type;
         public VariableSymbol Variable { get; }
         public BoundExpression Expression { get; }
-
     }
 }
