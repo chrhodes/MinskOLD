@@ -27,6 +27,20 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("12 != 3", true)]
         [InlineData("5 != 5", false)]
 
+        [InlineData("3 < 4", true)]
+        [InlineData("5 < 4", false)]
+
+        [InlineData("4 <= 4", true)]
+        [InlineData("3 <= 4", true)]
+        [InlineData("5 <= 4", false)]
+
+        [InlineData("4 > 3", true)]
+        [InlineData("4 > 5", false)]
+
+        [InlineData("4 >= 4", true)]
+        [InlineData("4 >= 3", true)]
+        [InlineData("4 >= 5", false)]
+
         [InlineData("false == false", true)]
         [InlineData("true == false", false)]
         [InlineData("false != false", false)]

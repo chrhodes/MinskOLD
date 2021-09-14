@@ -37,6 +37,10 @@ namespace Minsk.CodeAnalysis.Syntax
 
                 case SyntaxKind.EqualsEqualsToken:
                 case SyntaxKind.BangEqualsToken:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessOrEqualsToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
 
                 case SyntaxKind.AmpersandAmpersandToken:
@@ -101,11 +105,35 @@ namespace Minsk.CodeAnalysis.Syntax
         {
             switch (kind)
             {
+                case SyntaxKind.PlusToken:
+                    return "+";
+
+                case SyntaxKind.MinusToken:
+                    return "-";
+
+                case SyntaxKind.StarToken:
+                    return "*";
+
+                case SyntaxKind.SlashToken:
+                    return "/";
+
                 case SyntaxKind.BangToken:
                     return "!";
 
                 case SyntaxKind.EqualsToken:
                     return "=";
+
+                case SyntaxKind.LessToken:
+                    return "<";
+
+                case SyntaxKind.LessOrEqualsToken:
+                    return "<=";
+
+                case SyntaxKind.GreaterToken:
+                    return ">";
+
+                case SyntaxKind.GreaterOrEqualsToken:
+                    return ">=";
 
                 case SyntaxKind.AmpersandAmpersandToken:
                     return "&&";
@@ -118,18 +146,6 @@ namespace Minsk.CodeAnalysis.Syntax
 
                 case SyntaxKind.BangEqualsToken:
                     return "!=";
-
-                case SyntaxKind.PlusToken:
-                    return "+";
-
-                case SyntaxKind.MinusToken:
-                    return "-";
-
-               case SyntaxKind.StarToken:
-                    return "*";
-
-               case SyntaxKind.SlashToken:
-                    return "/";
 
                case SyntaxKind.OpenParenthesisToken:
                     return "(";
