@@ -11,8 +11,8 @@ namespace Minsk.CodeAnalysis.Syntax
 
     internal sealed class Lexer
     {
-        private readonly SourceText _text;
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
+        private readonly SourceText _text;
 
         private int _position;
 

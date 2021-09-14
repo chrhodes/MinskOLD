@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Drawing;
-using System.Linq;
 
 using Minsk.CodeAnalysis.Syntax;
 
@@ -86,7 +84,12 @@ namespace Minsk.CodeAnalysis.Binding
                 case SyntaxKind.VariableDeclaration:
                     Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
 
-                    return BindVariableDeclaration((VariableDeclarationStatement)syntax);
+                    return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
+
+                case SyntaxKind.IfStatement:
+                    Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                    return BindIfStatement((IfStatementSyntax)syntax);
 
                 case SyntaxKind.ExpressionStatement:
                     Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
@@ -95,10 +98,8 @@ namespace Minsk.CodeAnalysis.Binding
 
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
-
             }
         }
-
 
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
         {
@@ -116,7 +117,7 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundBlockStatement(statements.ToImmutable());
         }
 
-        private BoundStatement BindVariableDeclaration(VariableDeclarationStatement syntax)
+        private BoundStatement BindVariableDeclaration(VariableDeclarationSyntax syntax)
         {
             var name = syntax.Identifier.Text;
             var initializer = BindExpression(syntax.Initializer);
@@ -131,11 +132,34 @@ namespace Minsk.CodeAnalysis.Binding
             return new BoundVariableDeclaration(variable, initializer);
         }
 
+        private BoundStatement BindIfStatement(IfStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(Boolean));
+            var thenStatement = BindStatement(syntax.ThenStatement);
+            var elseStatement = syntax.ElseClause == null
+                ? null
+                : BindStatement(syntax.ElseClause.ElseStatement);
+
+            return new BoundIfStatement(condition, thenStatement, elseStatement);
+        }
+
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
         {
             var expression = BindExpression(syntax.Expression);
 
             return new BoundExpressionStatement(expression);
+        }
+
+        private BoundExpression BindExpression(ExpressionSyntax syntax, Type targetType)
+        {
+            var result = BindExpression(syntax);
+
+            if (result.Type != targetType)
+            {
+                _diagnostics.ReportCannotConvert(syntax.Span, result.Type, targetType);
+            }
+
+            return result;
         }
 
         public BoundExpression BindExpression(ExpressionSyntax syntax)

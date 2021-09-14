@@ -3,9 +3,9 @@
 
         // var x = 10
         // let x = 10
-        public sealed class VariableDeclarationStatement : StatementSyntax
+        public sealed class VariableDeclarationSyntax : StatementSyntax
         {
-            public VariableDeclarationStatement(SyntaxToken keyword, SyntaxToken identifier, SyntaxToken equalsToken, ExpressionSyntax initializer)
+            public VariableDeclarationSyntax(SyntaxToken keyword, SyntaxToken identifier, SyntaxToken equalsToken, ExpressionSyntax initializer)
             {
                 Keyword = keyword;
                 Identifier = identifier;

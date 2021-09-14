@@ -6,15 +6,16 @@ namespace Minsk.CodeAnalysis.Binding
 
         BlockStatement,
         VariableDeclaration,
+        IfStatement,
         ExpressionStatement,
 
         // Expressions
 
-        BinaryExpression,
         LiteralExpression,
         VariableExpression,
         AssignmentExpression,
         UnaryExpression,
+        BinaryExpression,
 
     }
 }

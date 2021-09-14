@@ -57,6 +57,14 @@ namespace Minsk.CodeAnalysis
                         break;
                     }
 
+                case BoundNodeKind.IfStatement:
+                    {
+                        Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
+
+                        EvaluateIfStatement((BoundIfStatement)node);
+                        break;
+                    }
+
                 case BoundNodeKind.ExpressionStatement:
                     {
                         Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
@@ -70,6 +78,13 @@ namespace Minsk.CodeAnalysis
             }
         }
 
+        private void EvaluateVarialbeDeclaration(BoundVariableDeclaration node)
+        {
+            var value = EvaluateExpression(node.Initializer);
+            _variables[node.Variable] = value;
+            _lastValue = value;
+        }
+
         private void EvaluateBlockStatement(BoundBlockStatement node)
         {
             foreach (var statement in node.Statements )
@@ -78,11 +93,18 @@ namespace Minsk.CodeAnalysis
             }
         }
 
-        private void EvaluateVarialbeDeclaration(BoundVariableDeclaration node)
+        private void EvaluateIfStatement(BoundIfStatement node)
         {
-            var value = EvaluateExpression(node.Initializer);
-            _variables[node.Variable] = value;
-            _lastValue = value;
+            var condition = (Boolean)EvaluateExpression(node.Condition);
+
+            if (condition)
+            {
+                EvaluateStatement(node.ThenStatement);
+            }
+            else if (node.ElseStatement != null)
+            {
+                EvaluateStatement(node.ElseStatement);
+            }
         }
 
         private void EvaluateExpressionStatement(BoundExpressionStatement node)

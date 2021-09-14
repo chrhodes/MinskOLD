@@ -6,6 +6,25 @@ namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class BoundBinaryOperator
     {
+        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type type)
+                    : this(syntaxKind, kind, type, type, type)
+        {
+        }
+
+        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type operandType, Type resultType)
+            : this(syntaxKind, kind, operandType, operandType, resultType)
+        {
+        }
+
+        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightType, Type resultType)
+        {
+            SyntaxKind = syntaxKind;
+            Kind = kind;
+            LeftType = leftType;
+            RightType = rightType;
+            Type = resultType;
+        }
+
         private static BoundBinaryOperator[] _operators =
         {
             new BoundBinaryOperator(SyntaxKind.PlusToken, BoundBinaryOperatorKind.Addition, typeof(int)),
@@ -26,25 +45,6 @@ namespace Minsk.CodeAnalysis.Binding
             new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(Boolean)),
             new BoundBinaryOperator(SyntaxKind.BangEqualsToken, BoundBinaryOperatorKind.NotEquals, typeof(Boolean)),
         };
-
-        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type type)
-                    : this(syntaxKind, kind, type, type, type)
-        {
-        }
-
-        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type operandType, Type resultType)
-            : this(syntaxKind, kind, operandType, operandType, resultType)
-        {
-        }
-
-        private BoundBinaryOperator(SyntaxKind syntaxKind, BoundBinaryOperatorKind kind, Type leftType, Type rightType, Type resultType)
-        {
-            SyntaxKind = syntaxKind;
-            Kind = kind;
-            LeftType = leftType;
-            RightType = rightType;
-            Type = resultType;
-        }
 
         public BoundBinaryOperatorKind Kind { get; }
         public Type LeftType { get; }

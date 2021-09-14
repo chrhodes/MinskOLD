@@ -58,14 +58,20 @@ namespace Minsk.CodeAnalysis.Syntax
         {
             switch (text)
             {
-                case "true":
-                    return SyntaxKind.TrueKeyword;
+                case "else":
+                    return SyntaxKind.ElseKeyword;
 
                 case "false":
                     return SyntaxKind.FalseKeyword;
 
+                case "if":
+                    return SyntaxKind.IfKeyword;
+
                 case "let":
                     return SyntaxKind.LetKeyword;
+
+                case "true":
+                    return SyntaxKind.TrueKeyword;
 
                 case "var":
                     return SyntaxKind.VarKeyword;
@@ -159,14 +165,20 @@ namespace Minsk.CodeAnalysis.Syntax
                 case SyntaxKind.CloseBraceToken:
                     return "}";
 
+                case SyntaxKind.ElseKeyword:
+                    return "else";
+
                 case SyntaxKind.FalseKeyword:
                     return "false";
 
-                case SyntaxKind.TrueKeyword:
-                    return "true";
+                case SyntaxKind.IfKeyword:
+                    return "if";
 
                 case SyntaxKind.LetKeyword:
                     return "let";
+
+                case SyntaxKind.TrueKeyword:
+                    return "true";
 
                 case SyntaxKind.VarKeyword:
                     return "var";
