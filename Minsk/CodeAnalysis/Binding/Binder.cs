@@ -91,6 +91,11 @@ namespace Minsk.CodeAnalysis.Binding
 
                     return BindIfStatement((IfStatementSyntax)syntax);
 
+                case SyntaxKind.WhileStatement:
+                    Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                    return BindWhileStatement((WhileStatementSyntax)syntax);
+
                 case SyntaxKind.ExpressionStatement:
                     Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
 
@@ -141,6 +146,14 @@ namespace Minsk.CodeAnalysis.Binding
                 : BindStatement(syntax.ElseClause.ElseStatement);
 
             return new BoundIfStatement(condition, thenStatement, elseStatement);
+        }
+
+        private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(Boolean));
+            var body = BindStatement(syntax.Body);
+
+            return new BoundWhileStatement(condition, body);
         }
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)

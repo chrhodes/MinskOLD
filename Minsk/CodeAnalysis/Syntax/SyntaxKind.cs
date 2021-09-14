@@ -40,6 +40,7 @@ namespace Minsk.CodeAnalysis.Syntax
         LetKeyword,
         TrueKeyword,
         VarKeyword,
+        WhileKeyword,
 
         // Nodes
 
@@ -51,6 +52,7 @@ namespace Minsk.CodeAnalysis.Syntax
         BlockStatement,
         VariableDeclaration,
         IfStatement,
+        WhileStatement,
         ExpressionStatement,
 
         // Expressions

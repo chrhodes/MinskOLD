@@ -7,6 +7,7 @@ namespace Minsk.CodeAnalysis.Binding
         BlockStatement,
         VariableDeclaration,
         IfStatement,
+        WhileStatement,
         ExpressionStatement,
 
         // Expressions
@@ -16,6 +17,5 @@ namespace Minsk.CodeAnalysis.Binding
         AssignmentExpression,
         UnaryExpression,
         BinaryExpression,
-
     }
 }

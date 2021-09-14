@@ -65,6 +65,14 @@ namespace Minsk.CodeAnalysis
                         break;
                     }
 
+                case BoundNodeKind.WhileStatement:
+                    {
+                        Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
+
+                        EvaluateWhileStatement((BoundWhileStatement)node);
+                        break;
+                    }
+
                 case BoundNodeKind.ExpressionStatement:
                     {
                         Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
@@ -104,6 +112,14 @@ namespace Minsk.CodeAnalysis
             else if (node.ElseStatement != null)
             {
                 EvaluateStatement(node.ElseStatement);
+            }
+        }
+
+        private void EvaluateWhileStatement(BoundWhileStatement node)
+        {
+            while((Boolean)EvaluateExpression(node.Condition))
+            {
+                EvaluateStatement(node.Body);
             }
         }
 
