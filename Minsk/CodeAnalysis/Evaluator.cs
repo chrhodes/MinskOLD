@@ -73,6 +73,14 @@ namespace Minsk.CodeAnalysis
                         break;
                     }
 
+                case BoundNodeKind.ForStatement:
+                    {
+                        Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
+
+                        EvaluateForStatement((BoundForStatement)node);
+                        break;
+                    }
+
                 case BoundNodeKind.ExpressionStatement:
                     {
                         Log.EVALUATOR("Exit", Common.LOG_CATEGORY, startTicks);
@@ -121,6 +129,18 @@ namespace Minsk.CodeAnalysis
             {
                 EvaluateStatement(node.Body);
             }
+        }
+
+        private void EvaluateForStatement(BoundForStatement node)
+        {
+            var lowerBound = (Int32)EvaluateExpression(node.LowerBound);
+            var upperBound = (Int32)EvaluateExpression(node.UpperBound);
+
+            for (int i = lowerBound; i <= upperBound; i++)
+            {
+                _variables[node.Variable] = i;
+                EvaluateStatement(node.Body);
+            }            
         }
 
         private void EvaluateExpressionStatement(BoundExpressionStatement node)

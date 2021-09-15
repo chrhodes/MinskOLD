@@ -36,8 +36,10 @@ namespace Minsk.CodeAnalysis.Syntax
 
         ElseKeyword,
         FalseKeyword,
+        ForKeyword,
         IfKeyword,
         LetKeyword,
+        ToKeyword,
         TrueKeyword,
         VarKeyword,
         WhileKeyword,
@@ -51,6 +53,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         BlockStatement,
         VariableDeclaration,
+        ForStatement,
         IfStatement,
         WhileStatement,
         ExpressionStatement,

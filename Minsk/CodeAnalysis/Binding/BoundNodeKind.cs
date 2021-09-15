@@ -8,6 +8,7 @@ namespace Minsk.CodeAnalysis.Binding
         VariableDeclaration,
         IfStatement,
         WhileStatement,
+        ForStatement,
         ExpressionStatement,
 
         // Expressions

@@ -96,6 +96,11 @@ namespace Minsk.CodeAnalysis.Binding
 
                     return BindWhileStatement((WhileStatementSyntax)syntax);
 
+                case SyntaxKind.ForStatement:
+                    Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
+
+                    return BindForStatement((ForStatementSyntax)syntax);
+
                 case SyntaxKind.ExpressionStatement:
                     Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
 
@@ -154,6 +159,28 @@ namespace Minsk.CodeAnalysis.Binding
             var body = BindStatement(syntax.Body);
 
             return new BoundWhileStatement(condition, body);
+        }
+
+        private BoundStatement BindForStatement(ForStatementSyntax syntax)
+        {
+            var lowerBound = BindExpression(syntax.LowerBound, typeof(Int32));
+            var upperBound = BindExpression(syntax.UpperBound, typeof(Int32));
+
+            _scope = new BoundScope(_scope);
+
+            var name = syntax.Identifier.Text;
+            var variable = new VariableSymbol(name, true, typeof(Int32));
+
+            if (! _scope.TryDeclare(variable))
+            {
+                _diagnostics.ReportVariableAlreadyDeclared(syntax.Identifier.Span, name);
+            }
+
+            var body = BindStatement(syntax.Body);
+
+            _scope = _scope.Parent;
+
+            return new BoundForStatement(variable, lowerBound, upperBound, body);
         }
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
