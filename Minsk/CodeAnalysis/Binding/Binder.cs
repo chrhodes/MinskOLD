@@ -247,7 +247,7 @@ namespace Minsk.CodeAnalysis.Binding
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntax syntax)
         {
             Int64 startTicks = Log.BINDER($"Enter", Common.LOG_CATEGORY);
-            Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
+            Log.BINDER($"Exit ({syntax.Expression})", Common.LOG_CATEGORY, startTicks);
 
             return BindExpression(syntax.Expression);
         }
@@ -258,7 +258,7 @@ namespace Minsk.CodeAnalysis.Binding
 
             var value = syntax.Value ?? 0;
 
-            Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
+            Log.BINDER($"Exit ({value})", Common.LOG_CATEGORY, startTicks);
 
             return new BoundLiteralExpression(value);
         }
@@ -269,6 +269,15 @@ namespace Minsk.CodeAnalysis.Binding
 
             var name = syntax.IdentifierToken.Text;
 
+            if (string.IsNullOrEmpty(name))
+            {
+                // This means the token was inserted by the parser.
+                // We already reported an error so we can just return
+                // an error expression.
+
+                return new BoundLiteralExpression(0);
+            }
+
             if (! _scope.TryLookup(name, out var variable))
             {
                 _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
@@ -277,7 +286,7 @@ namespace Minsk.CodeAnalysis.Binding
                 return new BoundLiteralExpression(0);
             }
 
-            Log.BINDER($"Exit", Common.LOG_CATEGORY, startTicks);
+            Log.BINDER($"Exit ({variable.Name})", Common.LOG_CATEGORY, startTicks);
 
             return new BoundVariableExpression(variable);
         }
