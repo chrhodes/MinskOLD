@@ -85,12 +85,12 @@ namespace Minsk.CodeAnalysis
 
             if (index >= _tokens.Length)
             {
-                Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
+                Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
                 return _tokens[_tokens.Length - 1];
             }
 
-            Log.Info($"Exit", Common.LOG_CATEGORY, startTicks);
+            Log.Trace($"Exit", Common.LOG_CATEGORY, startTicks);
 
             return _tokens[index];
         }
