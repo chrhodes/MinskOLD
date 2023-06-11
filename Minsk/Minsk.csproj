@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
-    <PackageReference Include="VNC.Logging" Version="1.2.0" />
+    <PackageReference Include="VNC.Logging" Version="2.0.0" />
   </ItemGroup>
 
 </Project>

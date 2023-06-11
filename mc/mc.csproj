@@ -11,4 +11,9 @@
     <PackageReference Include="VNC.Logging.TraceListeners.SignalRCoreListener" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Minsk.Tests\Minsk.Tests.csproj" />
+    <ProjectReference Include="..\Minsk\Minsk.csproj" />
+  </ItemGroup>
+
 </Project>
