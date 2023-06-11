@@ -7,6 +7,7 @@ namespace Minsk.CodeAnalysis
 {
     // NOTE(crhodes)
     // Lexer breaks the input stream into tokens (words)
+    // that are consumed by Parser
 
     internal class Lexer
     {

@@ -9,7 +9,7 @@ namespace Minsk.CodeAnalysis
     // Parser assembles the tokens into sentences
     // Parser produces Syntax Trees (sentences)
     // from the Syntax Tokens (words)
-    // Syntax Nodes
+    // Syntax Nodes include trivia (whitespace)
 
     // Two possible trees
     // First is left to right.
