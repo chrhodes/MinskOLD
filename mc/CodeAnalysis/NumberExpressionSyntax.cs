@@ -22,7 +22,7 @@ namespace Minsk.CodeAnalysis
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
-            Int64 startTicks = Log.Trace($"Enter/Exit", Common.LOG_CATEGORY);
+            Int64 startTicks = Log.SYNTAX($"Enter/Exit", Common.LOG_CATEGORY);
 
             yield return NumberToken;
         }

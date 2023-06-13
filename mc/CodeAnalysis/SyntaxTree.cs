@@ -28,7 +28,11 @@ namespace Minsk.CodeAnalysis
 
         public static SyntaxTree Parse(string text)
         {
+            Int64 startTicks = Log.PARSER($"text >{text}<", Common.LOG_CATEGORY);
+
             var parser = new Parser(text);
+
+            Log.PARSER($"Exit", Common.LOG_CATEGORY, startTicks);
 
             return parser.Parse();
         }
