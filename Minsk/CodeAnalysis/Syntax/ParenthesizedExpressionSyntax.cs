@@ -25,11 +25,13 @@ namespace Minsk.CodeAnalysis.Syntax
         public SyntaxToken CloseParenthesisToken { get; }
         //public SyntaxToken OpenParenthesisToken { get; }
 
-        //public override IEnumerable<SyntaxNode> GetChildren()
-        //{
-        //    yield return OpenParenthesisToken;
-        //    yield return Expression;
-        //    yield return CloseParenthesisToken;
-        //}
+        public override IEnumerable<SyntaxNode> GetChildren()
+        {
+            Int64 startTicks = Log.SYNTAX($"Enter/Exit", Common.LOG_CATEGORY);
+
+            yield return OpenParenthesisToken;
+            yield return Expression;
+            yield return CloseParenthesisToken;
+        }
     }
 }
